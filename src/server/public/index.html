@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RepoRose</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='28'%3E%F0%9F%8C%B9%3C/text%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <!-- Top nav ------------------------------------------------------ -->
+    <header id="top-nav">
+      <button class="logo" id="logo-btn" type="button" title="Reset view">
+        <span class="logo-icon">🌹</span>
+        <span class="logo-text">RepoRose</span>
+      </button>
+
+      <div id="search-bar">
+        <input
+          id="search-input"
+          type="text"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="Search files, functions, ask a question…"
+        />
+        <kbd class="search-hint">⌘K</kbd>
+        <div id="search-results" hidden></div>
+      </div>
+
+      <div class="nav-actions">
+        <button id="fit-btn" class="icon-btn" type="button" title="Fit graph in view">◎</button>
+        <button id="theme-toggle" class="icon-btn" type="button" title="Toggle theme">☀️</button>
+        <button id="settings-btn" class="icon-btn" type="button" title="Settings">⚙️</button>
+      </div>
+    </header>
+
+    <!-- Loading + error overlays ------------------------------------ -->
+    <div id="loading" class="overlay">
+      <div class="spinner"></div>
+      <div class="overlay-text">Loading map…</div>
+    </div>
+    <div id="error" class="overlay" hidden>
+      <div class="overlay-text" id="error-text"></div>
+    </div>
+
+    <!-- Network picker (shown on first load) ------------------------ -->
+    <div id="network-picker" class="overlay picker-overlay" hidden>
+      <div class="picker-card">
+        <header class="picker-header">
+          <h2>Pick a network to explore</h2>
+          <p class="muted">
+            Your repo splits into one or more disconnected graphs. Start with the
+            <strong>main network</strong> for the core code, or jump into an
+            isolated cluster.
+          </p>
+        </header>
+        <ul id="picker-list" class="picker-list"></ul>
+        <footer class="picker-footer">
+          <button id="picker-all" type="button" class="secondary">Show all networks</button>
+          <span class="muted">You can switch any time from the Physics panel.</span>
+        </footer>
+      </div>
+    </div>
+
+    <!-- 3D canvas --------------------------------------------------- -->
+    <main id="canvas-container"></main>
+
+    <!-- Hover tooltip ----------------------------------------------- -->
+    <div id="tooltip" hidden></div>
+
+    <!-- Stats badge (bottom-right) ---------------------------------- -->
+    <aside id="stats-badge">
+      <div><span id="stat-files">—</span> files</div>
+      <div><span id="stat-links">—</span> links</div>
+      <div><span id="stat-fps">—</span> fps</div>
+    </aside>
+
+    <!-- Physics panel (bottom-left) --------------------------------- -->
+    <aside id="physics-panel" class="panel">
+      <header class="panel-header">
+        <h3>Physics</h3>
+        <button class="icon-btn" id="physics-collapse" type="button" title="Collapse">▾</button>
+      </header>
+      <div class="panel-body">
+        <label>
+          <span class="label-row"><span>Gravity</span><span id="gravity-value">0.5</span></span>
+          <input type="range" id="gravity-slider" min="0" max="1" step="0.05" value="0.5" />
+        </label>
+        <label>
+          <span class="label-row"><span>Bounciness</span><span id="bounce-value">0.8</span></span>
+          <input type="range" id="bounce-slider" min="0" max="1" step="0.05" value="0.8" />
+        </label>
+        <label>
+          <span class="label-row"><span>Friction</span><span id="friction-value">0.3</span></span>
+          <input type="range" id="friction-slider" min="0" max="1" step="0.05" value="0.3" />
+        </label>
+        <label>
+          <span class="label-row"><span>Link Strength</span><span id="link-value">0.6</span></span>
+          <input type="range" id="link-slider" min="0" max="1" step="0.05" value="0.6" />
+        </label>
+        <button id="reset-physics" class="secondary" type="button">Reset to defaults</button>
+
+        <h4>Network</h4>
+        <select id="network-select">
+          <option value="all">All networks</option>
+        </select>
+        <div id="network-summary" class="muted">—</div>
+        <div class="network-actions">
+          <button id="network-prev" type="button">Previous</button>
+          <button id="network-next" type="button">Next</button>
+          <button id="network-picker-btn" type="button" title="Open network picker">Pick…</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Details panel (right side) ---------------------------------- -->
+    <aside id="details-panel" class="panel" hidden>
+      <header class="panel-header">
+        <button class="icon-btn" id="details-close" type="button" title="Close (Esc)">←</button>
+        <h2 id="detail-name">—</h2>
+      </header>
+      <div class="panel-body">
+        <section class="section">
+          <h3>📍 Location</h3>
+          <p class="mono" id="detail-path">—</p>
+          <p class="muted" id="detail-language"></p>
+        </section>
+
+        <section class="section">
+          <h3>📊 Metrics</h3>
+          <p>Importance: <strong id="detail-importance">—</strong> <span id="detail-importance-tier" class="muted"></span></p>
+          <p>Used by: <strong id="detail-incoming">—</strong> files</p>
+          <p>Uses: <strong id="detail-outgoing">—</strong> files</p>
+          <p>Size: <strong id="detail-size">—</strong></p>
+        </section>
+
+        <section class="section">
+          <h3>📝 Description</h3>
+          <p id="detail-description">—</p>
+        </section>
+
+        <section class="section">
+          <h3>🔗 Imports</h3>
+          <ul id="detail-imports" class="link-list"></ul>
+        </section>
+
+        <section class="section">
+          <h3>⬅️ Imported by</h3>
+          <ul id="detail-incoming-list" class="link-list"></ul>
+        </section>
+
+        <section class="section">
+          <h3>📦 Packages</h3>
+          <ul id="detail-packages" class="link-list"></ul>
+        </section>
+
+        <section class="section">
+          <h3>ƒ Functions</h3>
+          <ul id="detail-functions" class="link-list"></ul>
+        </section>
+      </div>
+    </aside>
+
+    <!-- Settings popover -------------------------------------------- -->
+    <aside id="settings-menu" class="panel" hidden>
+      <header class="panel-header">
+        <h3>Settings</h3>
+        <button class="icon-btn" id="settings-close" type="button" title="Close">✕</button>
+      </header>
+      <div class="panel-body">
+        <label class="check"><input id="opt-labels" type="checkbox" checked /> Show node labels</label>
+        <label class="check"><input id="opt-arrows" type="checkbox" /> Directed edges (arrows)</label>
+        <label class="check"><input id="opt-pause" type="checkbox" checked /> Auto-pause on idle</label>
+        <label class="check"><input id="opt-limit" type="checkbox" /> Limit edges (top 100 by weight)</label>
+
+        <h4>Physics presets</h4>
+        <select id="opt-preset">
+          <option value="relaxed">Relaxed (slow)</option>
+          <option value="standard" selected>Standard</option>
+          <option value="tight">Tight (bouncy)</option>
+        </select>
+
+        <h4>Camera</h4>
+        <select id="opt-controls">
+          <option value="orbit" selected>Orbit</option>
+          <option value="fly">Fly (WASD + mouse)</option>
+          <option value="trackball">Trackball</option>
+        </select>
+
+        <div class="settings-actions">
+          <button id="export-json" type="button">Export JSON</button>
+          <button id="export-png" type="button">Export PNG</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Help overlay (?) -------------------------------------------- -->
+    <aside id="help-panel" class="panel" hidden>
+      <header class="panel-header">
+        <h3>Keyboard shortcuts</h3>
+        <button class="icon-btn" id="help-close" type="button" title="Close">✕</button>
+      </header>
+      <div class="panel-body">
+        <table class="kbd-table">
+          <tr><td><kbd>Mouse drag</kbd></td><td>Rotate view</td></tr>
+          <tr><td><kbd>Wheel</kbd></td><td>Zoom</td></tr>
+          <tr><td><kbd>◎</kbd></td><td>Fit graph in view</td></tr>
+          <tr><td><kbd>⌘ K</kbd></td><td>Focus search</td></tr>
+          <tr><td><kbd>Esc</kbd></td><td>Close panels</td></tr>
+          <tr><td><kbd>?</kbd></td><td>Toggle this help</td></tr>
+        </table>
+      </div>
+    </aside>
+
+    <!-- 3d-force-graph (UMD; loads three.js as part of the bundle) -->
+    <script src="https://unpkg.com/3d-force-graph@1.80.0/dist/3d-force-graph.min.js"></script>
+    <script src="/app.js"></script>
+  </body>
+</html>

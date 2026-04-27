@@ -1,0 +1,61 @@
+{
+  "name": "reporose",
+  "version": "0.1.0",
+  "description": "Repository scanner that builds a structural map of a codebase (functions, imports, exports, dependencies) and adds file descriptions of what the file does,, so anagentic AI can just read the map and know the project context",
+  "main": "src/core/scanner.js",
+  "bin": {
+    "reporose": "bin/cli.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "bin",
+    "src",
+    "docs",
+    "README.md",
+    "LICENSE",
+    "AGENTS.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "analyze": "node bin/cli.js analyze",
+    "serve": "node bin/cli.js serve",
+    "prepublishOnly": "npm test"
+  },
+  "keywords": [
+    "repository",
+    "scanner",
+    "ast",
+    "dependency-graph",
+    "code-analysis",
+    "ai",
+    "mcp",
+    "mcp-server",
+    "token-saver",
+    "context-retrieval",
+    "claude",
+    "ollama"
+  ],
+  "author": "MIbrahim - mibrahimpro.1@gmail.com",
+  "license": "GPL-3.0-or-later",
+  "homepage": "https://github.com/MIbrahimPro/RepoRose#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MIbrahimPro/RepoRose.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MIbrahimPro/RepoRose/issues"
+  },
+  "type": "commonjs",
+  "dependencies": {
+    "@babel/parser": "^7.24.7",
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "express": "^4.22.1",
+    "ignore": "^5.3.1"
+  },
+  "optionalDependencies": {
+    "keytar": "^7.9.0"
+  }
+}
