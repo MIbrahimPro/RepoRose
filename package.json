@@ -22,7 +22,7 @@
     "test": "node --test tests/*.test.js",
     "analyze": "node bin/cli.js analyze",
     "serve": "node bin/cli.js serve",
-    "prepublishOnly": ""
+    "prepublishOnly": "npm run test"
   },
   "keywords": [
     "repository",
