@@ -1,9 +1,15 @@
 ![alt text](image.png)
 ---
-A CLI tool that scans any codebase, maps its dependency graph, generates AI-powered summaries for every file and function, and serves an interactive 3D visualization in your browser.
+A CLI tool that scans any codebase, maps its dependency graph, generates AI-powered summaries, and serves an interactive 3D visualization in your browser.
  
 > Be 'real', speak with heart.
  
+## What is Reporose
+
+Reporose reads through your repository files and builds a structural map of the project. It tracks how files depend on each other and scores which files are more important based on how many other files depend on them and where they sit in the dependency graph. It also uses smaller models to create descriptions of what the files contents do.
+
+**Its main purpose is to save agentic AI tokens.** Instead of feeding many files into an AI, you can provide one map file (`.reporose/map.json`) and the agent gets exact project context, including what the project does, which files are central, and which file should be targeted for a specific change.
+
 
 ## Features
 
