@@ -1,3 +1,9 @@
+<!-- reporose:start -->
+> **AI agents:** read `.reporose/map.json` for the full file map, dependency graph, and per-file descriptions. Use it as your project context before answering questions about this repo.
+>
+> **Note:** If you make changes to files, you can regenerate the map (and thus update file descriptions) by running `reporose analyze` again in the project root.
+<!-- reporose:end -->
+
 # Reporose Project Context
 
 ## Overview

@@ -1,0 +1,62 @@
+{
+  "ai": {
+    "provider": "ollama-cloud",
+    "model": "reporose-heuristic",
+    "ollama": {
+      "base_url": "http://localhost:11434",
+      "model": "qwen2.5-coder:0.5b-instruct-q3_K_M",
+      "options": {
+        "num_ctx": 32000,
+        "temperature": 0,
+        "num_predict": 10000
+      },
+      "timeout_ms": 600000,
+      "concurrency": "auto"
+    },
+    "openai": {
+      "base_url": "https://api.openai.com/v1",
+      "api_key_env": "OPENAI_API_KEY",
+      "model": "gpt-4o-mini",
+      "timeout_ms": 60000,
+      "temperature": 0.2
+    },
+    "openrouter": {
+      "base_url": "https://openrouter.ai/api/v1",
+      "api_key_env": "OPENROUTER_API_KEY",
+      "model": "minimax/minimax-m2.5:free"
+    },
+    "anthropic": {
+      "base_url": "https://api.anthropic.com/v1",
+      "api_key_env": "ANTHROPIC_API_KEY",
+      "model": "claude-haiku-4-5",
+      "timeout_ms": 60000,
+      "temperature": 0.2
+    },
+    "ollama-cloud": {
+      "base_url": "https://ollama.com",
+      "api_key_env": "OLLAMA_API_KEY",
+      "model": "gpt-oss:20b-cloud",
+      "options": {
+        "num_ctx": 32000,
+        "temperature": 0,
+        "num_predict": 800
+      },
+      "timeout_ms": 120000,
+      "concurrency": "auto"
+    },
+    "groq": {
+      "base_url": "https://api.groq.com/openai/v1",
+      "api_key_env": "GROQ_API_KEY",
+      "model": "llama-3.1-8b-instant",
+      "timeout_ms": 30000,
+      "context_size": 8192,
+      "max_tpm": 6000
+    },
+    "local": {
+      "model_path": null,
+      "tier": "low",
+      "context_size": 2048,
+      "gpu_layers": 0
+    }
+  }
+}

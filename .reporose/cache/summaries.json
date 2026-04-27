@@ -1,0 +1,1712 @@
+{
+  "version": 1,
+  "files": {
+    "src/ai/config.js": {
+      "hash": "c673b6e875dcccd4174e15c61cb9fb86",
+      "description": "The file defines the configuration subsystem for Reporose, managing a hierarchical `.reporose/config.json` per‑repo file that merges a frozen DEFAULT_CONFIG with optional overrides a global user config in `$HOME/.reose/config.json` and a repo‑specific file; merging is performed by a recursive deepMerge that respects nested provider‑specific options. It implements a set of “apply” functions (applyModelFlag, applyModelPath, applyLocalTier, applyApiKeyEnv, applyBaseUrl, applyModelName, applyOllamaOption, applyConcurrency) that return a new config object with the requested change, enabling command‑line arguments like `--model cloud` or `--api-key-env MY_KEY` to be translated into the appropriate nested provider section. A preset subsystem stores named config snapshots in `$HOME/.reporose/presets.json`; functions loadPresets, savePreset, deletePreset, applyPreset, listPresets, and presetModelLabel allow users to save, list, delete, and apply reusable presets via CLI flags (e.g., `reporose preset apply my-ollama`). The module also exposes constants (PROVIDER_ALIASES, KNOWN_PROVIDERS), path helpers (configPath, userConfigPath, presetsPath),",
+      "functions": {
+        "func_019_01": {
+          "description": ""
+        },
+        "func_019_02": {
+          "description": ""
+        },
+        "func_019_03": {
+          "description": ""
+        },
+        "func_019_04": {
+          "description": ""
+        },
+        "func_019_05": {
+          "description": ""
+        },
+        "func_019_06": {
+          "description": ""
+        },
+        "func_019_07": {
+          "description": ""
+        },
+        "func_019_08": {
+          "description": ""
+        },
+        "func_019_09": {
+          "description": ""
+        },
+        "func_019_10": {
+          "description": ""
+        },
+        "func_019_11": {
+          "description": ""
+        },
+        "func_019_12": {
+          "description": ""
+        },
+        "func_019_13": {
+          "description": ""
+        },
+        "func_019_14": {
+          "description": ""
+        },
+        "func_019_15": {
+          "description": ""
+        },
+        "func_019_16": {
+          "description": ""
+        },
+        "func_019_17": {
+          "description": ""
+        },
+        "func_019_18": {
+          "description": ""
+        },
+        "func_019_19": {
+          "description": ""
+        },
+        "func_019_20": {
+          "description": ""
+        },
+        "func_019_21": {
+          "description": ""
+        },
+        "func_019_22": {
+          "description": ""
+        },
+        "func_019_23": {
+          "description": ""
+        },
+        "func_019_24": {
+          "description": ""
+        },
+        "func_019_25": {
+          "description": ""
+        },
+        "func_019_26": {
+          "description": ""
+        },
+        "func_019_27": {
+          "description": ""
+        },
+        "func_019_28": {
+          "description": ""
+        },
+        "func_019_29": {
+          "description": ""
+        },
+        "func_019_30": {
+          "description": ""
+        },
+        "func_019_31": {
+          "description": ""
+        }
+      }
+    },
+    "src/ai/heuristic.js": {
+      "hash": "b78328caa94439fbfaf42567fce193f5",
+      "description": "Heuristic.js supplies a lightweight “AI‑like” provider used by the Reporose summarizer during Phase 3 of the analyze workflow. It exports a factory that returns an object with `summarizeFile`, `summarizeFullFile`, `summarizeFunction` and `close` methods, each generating straightforward human‑readable summaries from in‑memory file metadata without performing network calls. `heuristicFileDescription` routes to `summarizeCodeFile` or `summarizeNonCodeFile`, which construct concise sentences including language, file size, and path, while `heuristicFunctionDescription` creates descriptions that capture the function type, usage pattern, asynchronousness, parameter count, and return type, leveraging helper utilities like `describeFunctionByName` and `splitWords`. The provider is invoked by the",
+      "functions": {
+        "func_020_01": {
+          "description": ""
+        },
+        "func_020_02": {
+          "description": ""
+        },
+        "func_020_03": {
+          "description": ""
+        },
+        "func_020_04": {
+          "description": ""
+        },
+        "func_020_05": {
+          "description": ""
+        },
+        "func_020_06": {
+          "description": ""
+        },
+        "func_020_07": {
+          "description": ""
+        },
+        "func_020_08": {
+          "description": ""
+        },
+        "func_020_09": {
+          "description": ""
+        },
+        "func_020_10": {
+          "description": ""
+        },
+        "func_020_11": {
+          "description": ""
+        },
+        "func_020_12": {
+          "description": ""
+        },
+        "func_020_13": {
+          "description": ""
+        },
+        "func_020_14": {
+          "description": ""
+        },
+        "func_020_15": {
+          "description": ""
+        },
+        "func_020_16": {
+          "description": ""
+        },
+        "func_020_17": {
+          "description": ""
+        },
+        "func_020_18": {
+          "description": ""
+        },
+        "func_020_19": {
+          "description": ""
+        },
+        "func_020_20": {
+          "description": ""
+        },
+        "func_020_21": {
+          "description": ""
+        }
+      }
+    },
+    "src/ai/prompts.js": {
+      "hash": "ce3391e8b4dc9088545ad0fa918f76cb",
+      "description": "This module centralizes prompt construction for the Reporose AI summarization workflow by exporting six functions that transform parsed file metadata into structured prompt objects and human‑readable text fed to the various AI providers. `buildFileInput` aggregates high‑level file information (name, path, language, type, size, imports, exports, functions, and a snippet) along with repository context and projected dependency hints. `buildFullFileInput` extends this for full file coverage by including line ranges and chunked content, supporting large‑file analysis through multi‑",
+      "functions": {
+        "func_025_01": {
+          "description": ""
+        },
+        "func_025_02": {
+          "description": ""
+        },
+        "func_025_03": {
+          "description": ""
+        },
+        "func_025_04": {
+          "description": ""
+        },
+        "func_025_05": {
+          "description": ""
+        },
+        "func_025_06": {
+          "description": ""
+        }
+      }
+    },
+    "src/cli/ollama-installer.js": {
+      "hash": "555305de0bfc6245853154448dc0c977",
+      "description": "The `src/cli/ollama-installer.js` module supplies the CLI’s “install Ollama” helper; it is invoked by the `install` command in `src/cli/commands.js`. It probes the host machine for an existing `ollama` binary via `which`, determines if the daemon is currently running with `pgrep`, and, if not present, builds an OS‑specific installation command (curl‑sh for macOS/Linux, a GUI download for Windows). The module then spawns the install process, streaming stdout and stderr line‑by‑line to a caller‐supplied `onLog` hook; on Windows it simply opens the default browser to the download page, delegating manual installation. After the process exits, the module re‑checks for the binary, prompts the user",
+      "functions": {
+        "func_029_01": {
+          "description": ""
+        },
+        "func_029_02": {
+          "description": ""
+        },
+        "func_029_03": {
+          "description": ""
+        },
+        "func_029_04": {
+          "description": ""
+        },
+        "func_029_05": {
+          "description": ""
+        },
+        "func_029_06": {
+          "description": ""
+        },
+        "func_029_07": {
+          "description": ""
+        }
+      }
+    },
+    "src/cli/prompt.js": {
+      "hash": "92f4ae45d5f30a4d6a69422cbafb4fc8",
+      "description": "The file furnishes a versatile CLI prompting toolkit that drives user interaction for the Reporose CLI. It exposes a `createSession` helper that detects TTY state, yields an `ask` method and a Boolean `tty` flag, and exposes a `kill` function for aborting a prompt stream. The module implements a set of high‑level prompt generators (`text`, `confirm`, `select`, `password`) that use the session to perform non‑blocking reads from the terminal, render a custom input UI (including line drawing",
+      "functions": {
+        "func_030_01": {
+          "description": ""
+        },
+        "func_030_02": {
+          "description": ""
+        },
+        "func_030_03": {
+          "description": ""
+        },
+        "func_030_04": {
+          "description": ""
+        },
+        "func_030_05": {
+          "description": ""
+        },
+        "func_030_06": {
+          "description": ""
+        },
+        "func_030_07": {
+          "description": ""
+        },
+        "func_030_08": {
+          "description": ""
+        },
+        "func_030_09": {
+          "description": ""
+        },
+        "func_030_10": {
+          "description": ""
+        },
+        "func_030_11": {
+          "description": ""
+        },
+        "func_030_12": {
+          "description": ""
+        },
+        "func_030_13": {
+          "description": ""
+        },
+        "func_030_14": {
+          "description": ""
+        },
+        "func_030_15": {
+          "description": ""
+        },
+        "func_030_16": {
+          "description": ""
+        },
+        "func_030_17": {
+          "description": ""
+        },
+        "func_030_18": {
+          "description": ""
+        },
+        "func_030_19": {
+          "description": ""
+        },
+        "func_030_20": {
+          "description": ""
+        },
+        "func_030_21": {
+          "description": ""
+        },
+        "func_030_22": {
+          "description": ""
+        },
+        "func_030_23": {
+          "description": ""
+        },
+        "func_030_24": {
+          "description": ""
+        },
+        "func_030_25": {
+          "description": ""
+        },
+        "func_030_26": {
+          "description": ""
+        },
+        "func_030_27": {
+          "description": ""
+        },
+        "func_030_28": {
+          "description": ""
+        },
+        "func_030_29": {
+          "description": ""
+        },
+        "func_030_30": {
+          "description": ""
+        }
+      }
+    },
+    "src/cli/terminal.js": {
+      "hash": "df8a8c4cae2617140fed357883372441",
+      "description": "The `src/cli/terminal.js` module implements an ANSI‑based terminal UI that runs in the CLI during `analyze` and `serve` modes. It keeps global state for the current mode, CI detection, file analysis stats, live AI preview text, server URL/path, and recent logs, and exposes functions (`start`, `startServe`, `stop`, `log`, `warn`, `error`, `serveLog`, `serveError`, `updateProgress`, `updateStats`, `updateLiveAi`, `done`, etc.) that mutate this state and trigger a redraw of the user’s viewport. The UI is redrawn by rebuilding a string containing a boxed layout defined with Unicode box‑drawing and color escapes, a progress bar, a spinner frame, a live‑AI preview pane, and, in serve mode, a list of recent HTTP requests; drawing logic uses cursor movement, line clearing, and optional cursor hide/show to avoid flicker. The module filters out noisy progress messages (`isSpammyLog`) so only meaningful events are shown.",
+      "functions": {
+        "func_031_01": {
+          "description": ""
+        },
+        "func_031_02": {
+          "description": ""
+        },
+        "func_031_03": {
+          "description": ""
+        },
+        "func_031_04": {
+          "description": ""
+        },
+        "func_031_05": {
+          "description": ""
+        },
+        "func_031_06": {
+          "description": ""
+        },
+        "func_031_07": {
+          "description": ""
+        },
+        "func_031_08": {
+          "description": ""
+        },
+        "func_031_09": {
+          "description": ""
+        },
+        "func_031_10": {
+          "description": ""
+        },
+        "func_031_11": {
+          "description": ""
+        },
+        "func_031_12": {
+          "description": ""
+        },
+        "func_031_13": {
+          "description": ""
+        },
+        "func_031_14": {
+          "description": ""
+        },
+        "func_031_15": {
+          "description": ""
+        },
+        "func_031_16": {
+          "description": ""
+        },
+        "func_031_17": {
+          "description": ""
+        },
+        "func_031_18": {
+          "description": ""
+        },
+        "func_031_19": {
+          "description": ""
+        },
+        "func_031_20": {
+          "description": ""
+        },
+        "func_031_21": {
+          "description": ""
+        },
+        "func_031_22": {
+          "description": ""
+        },
+        "func_031_23": {
+          "description": ""
+        },
+        "func_031_24": {
+          "description": ""
+        },
+        "func_031_25": {
+          "description": ""
+        },
+        "func_031_26": {
+          "description": ""
+        },
+        "func_031_27": {
+          "description": ""
+        },
+        "func_031_28": {
+          "description": ""
+        },
+        "func_031_29": {
+          "description": ""
+        },
+        "func_031_30": {
+          "description": ""
+        },
+        "func_031_31": {
+          "description": ""
+        },
+        "func_031_32": {
+          "description": ""
+        },
+        "func_031_33": {
+          "description": ""
+        },
+        "func_031_34": {
+          "description": ""
+        },
+        "func_031_35": {
+          "description": ""
+        },
+        "func_031_36": {
+          "description": ""
+        },
+        "func_031_37": {
+          "description": ""
+        },
+        "func_031_38": {
+          "description": ""
+        },
+        "func_031_39": {
+          "description": ""
+        },
+        "func_031_40": {
+          "description": ""
+        },
+        "func_031_41": {
+          "description": ""
+        },
+        "func_031_42": {
+          "description": ""
+        },
+        "func_031_43": {
+          "description": ""
+        },
+        "func_031_44": {
+          "description": ""
+        },
+        "func_031_45": {
+          "description": ""
+        }
+      }
+    },
+    "src/core/enrich.js": {
+      "hash": "42619f3f3d0ee00e6e4cb2b95b89178b",
+      "description": "Enrich.js augments the raw AST‑derived file information produced by the scanner, adding practical metadata for analysis and visualization: it extracts environment variable names used in the code, assigns semantic tags (api‑client, db‑client, auth, routing, etc.) by regex and import heuristics, deduces Next.js route paths from file names, and builds two‑level transitive import maps (“transitive_imports” and “transitive_imported_by”) to reflect indirect relationships. The main export, `enrichFiles`, mutates each file object in‑place, stripping `content` after enrichment to keep the map JSON compact; this function is called during the “map” phase of the CLI workflow before summarization. No network or authentication logic occurs here—the module purely performs synchronous, deterministic string and graph analysis. It depends only on the `path` module and the structure of the `files` array (with `content`, `imports`, and `path` fields), and downstream consumers such as the OpenAI summarizer, the Express server",
+      "functions": {
+        "func_032_01": {
+          "description": ""
+        },
+        "func_032_02": {
+          "description": ""
+        },
+        "func_032_03": {
+          "description": ""
+        },
+        "func_032_04": {
+          "description": ""
+        },
+        "func_032_05": {
+          "description": ""
+        },
+        "func_032_06": {
+          "description": ""
+        },
+        "func_032_07": {
+          "description": ""
+        },
+        "func_032_08": {
+          "description": ""
+        },
+        "func_032_09": {
+          "description": ""
+        }
+      }
+    },
+    "src/core/mapper.js": {
+      "hash": "22e71b5a5aaed30acc6b05e5a1a2718a",
+      "description": "The mapper module is the Phase‑2 engine of Reporose that enriches a scanner‑generated map by building a full dependency graph; it creates a file‑index, resolves every import to a concrete file or npm package, and produces direct, indirect, and package links while marking circular dependencies before computing indirect two‑hop paths. The core workhorse `mapDependencies` mutates the input map in place, adding `links`, `circular_dependencies`, `networks`, and `statistics`, and annotates each file with importance, usage, and betweenness centrality scores computed by `betweennessCentrality` and an iterative propagation algorithm. Peripheral helpers such as `computeIndirectLinks`, `buildNetworks`, and `computeStatistics` dig into",
+      "functions": {
+        "func_033_01": {
+          "description": ""
+        },
+        "func_033_02": {
+          "description": ""
+        },
+        "func_033_03": {
+          "description": ""
+        },
+        "func_033_04": {
+          "description": ""
+        },
+        "func_033_05": {
+          "description": ""
+        },
+        "func_033_06": {
+          "description": ""
+        },
+        "func_033_07": {
+          "description": ""
+        },
+        "func_033_08": {
+          "description": ""
+        },
+        "func_033_09": {
+          "description": ""
+        },
+        "func_033_10": {
+          "description": ""
+        },
+        "func_033_11": {
+          "description": ""
+        },
+        "func_033_12": {
+          "description": ""
+        },
+        "func_033_13": {
+          "description": ""
+        },
+        "func_033_14": {
+          "description": ""
+        },
+        "func_033_15": {
+          "description": ""
+        },
+        "func_033_16": {
+          "description": ""
+        },
+        "func_033_17": {
+          "description": ""
+        },
+        "func_033_18": {
+          "description": ""
+        }
+      }
+    },
+    "src/server/public/app.js": {
+      "hash": "3f8863df74d71f057c83f6ad7281abdd",
+      "description": "src/server/public/app.js powers the Reporose 3D graph viewer that runs entirely in the browser; it binds UI controls for network navigation, settings, export, and a help panel, fetches the graph map from the server’s `/api/graph` endpoint, builds an interactive force‑directed graph with `3d-force-graph`, and updates the display as users manipulate physics presets or network selections. It manages a global `state` object that holds the parsed map, current networks, graph instance, physics options, key‑hold set, and UI flags; helper functions like `buildGraphData`, `buildNetworks`, `populateNetworkSelect`, and `initGraph` are defined in earlier parts of the file. Keyboard shortcuts (Ctrl/Cmd‑K for search, Esc for panel toggling, space/Shift for vertical camera movement, and '?' for help) are wired to event listeners, with a periodic loop applying continuous movement. Export utilities create a downloadable JSON representation of the map or a PNG",
+      "functions": {
+        "func_036_01": {
+          "description": ""
+        },
+        "func_036_02": {
+          "description": ""
+        },
+        "func_036_03": {
+          "description": ""
+        },
+        "func_036_04": {
+          "description": ""
+        },
+        "func_036_05": {
+          "description": ""
+        },
+        "func_036_06": {
+          "description": ""
+        },
+        "func_036_07": {
+          "description": ""
+        },
+        "func_036_08": {
+          "description": ""
+        },
+        "func_036_09": {
+          "description": ""
+        },
+        "func_036_10": {
+          "description": ""
+        },
+        "func_036_11": {
+          "description": ""
+        },
+        "func_036_12": {
+          "description": ""
+        },
+        "func_036_13": {
+          "description": ""
+        },
+        "func_036_14": {
+          "description": ""
+        },
+        "func_036_15": {
+          "description": ""
+        },
+        "func_036_16": {
+          "description": ""
+        },
+        "func_036_17": {
+          "description": ""
+        },
+        "func_036_18": {
+          "description": ""
+        },
+        "func_036_19": {
+          "description": ""
+        },
+        "func_036_20": {
+          "description": ""
+        },
+        "func_036_21": {
+          "description": ""
+        },
+        "func_036_22": {
+          "description": ""
+        },
+        "func_036_23": {
+          "description": ""
+        },
+        "func_036_24": {
+          "description": ""
+        },
+        "func_036_25": {
+          "description": ""
+        },
+        "func_036_26": {
+          "description": ""
+        },
+        "func_036_27": {
+          "description": ""
+        },
+        "func_036_28": {
+          "description": ""
+        },
+        "func_036_29": {
+          "description": ""
+        },
+        "func_036_30": {
+          "description": ""
+        },
+        "func_036_31": {
+          "description": ""
+        },
+        "func_036_32": {
+          "description": ""
+        },
+        "func_036_33": {
+          "description": ""
+        },
+        "func_036_34": {
+          "description": ""
+        },
+        "func_036_35": {
+          "description": ""
+        },
+        "func_036_36": {
+          "description": ""
+        },
+        "func_036_37": {
+          "description": ""
+        },
+        "func_036_38": {
+          "description": ""
+        },
+        "func_036_39": {
+          "description": ""
+        },
+        "func_036_40": {
+          "description": ""
+        },
+        "func_036_41": {
+          "description": ""
+        },
+        "func_036_42": {
+          "description": ""
+        },
+        "func_036_43": {
+          "description": ""
+        },
+        "func_036_44": {
+          "description": ""
+        },
+        "func_036_45": {
+          "description": ""
+        },
+        "func_036_46": {
+          "description": ""
+        },
+        "func_036_47": {
+          "description": ""
+        },
+        "func_036_48": {
+          "description": ""
+        },
+        "func_036_49": {
+          "description": ""
+        },
+        "func_036_50": {
+          "description": ""
+        },
+        "func_036_51": {
+          "description": ""
+        },
+        "func_036_52": {
+          "description": ""
+        },
+        "func_036_53": {
+          "description": ""
+        },
+        "func_036_54": {
+          "description": ""
+        },
+        "func_036_55": {
+          "description": ""
+        },
+        "func_036_56": {
+          "description": ""
+        },
+        "func_036_57": {
+          "description": ""
+        },
+        "func_036_58": {
+          "description": ""
+        },
+        "func_036_59": {
+          "description": ""
+        },
+        "func_036_60": {
+          "description": ""
+        },
+        "func_036_61": {
+          "description": ""
+        },
+        "func_036_62": {
+          "description": ""
+        },
+        "func_036_63": {
+          "description": ""
+        },
+        "func_036_64": {
+          "description": ""
+        }
+      }
+    },
+    "src/server/search.js": {
+      "hash": "3d1750ce78717139d5597b2f013a738e",
+      "description": "The search.js module implements full‑text lookup over a generated repository map, providing an API that the server calls to generate autocomplete suggestions for the 3‑D visualize interface it tokenizes the query, removes stop words, scores each file, function and package based name, path, description, and imports, using a weighted scheme that privileges exact matches and file importance. It exposes a `search` function that accepts the map, query string, and options, iterates through map.files and map.packages, calculates per‑item relevance scores, and returns a sorted list limited to the caller’s option; the `tokenize` helper is also exported for potential reuse. The module has no external dependencies other than Node, and no side effects; it merely reads the map structure, performs string matching and returns results, making it suitable for caching or pre‑computing hits. In the codebase, the server route (e.g., `/api/search`) calls this function and serializes the output, while the frontend consumes the results to populate the auto‑complete component; other modules such as the mapper or scanner generate the `map` data that `search.js` consumes. The implementation relies on simple string operations and sequential loops, ensuring O(N) performance proportional to the number of files, functions, and packages in the map.",
+      "functions": {
+        "func_039_01": {
+          "description": ""
+        },
+        "func_039_02": {
+          "description": ""
+        },
+        "func_039_03": {
+          "description": ""
+        },
+        "func_039_04": {
+          "description": ""
+        },
+        "func_039_05": {
+          "description": ""
+        },
+        "func_039_06": {
+          "description": ""
+        }
+      }
+    },
+    "src/utils/agents-md.js": {
+      "hash": "c6ccd2511966524833e9faa4f6f524e2",
+      "description": "The `agents-md.js` utility is a helper that guarantees an AGENTS.md (or similarly named) file contains a standard preamble telling AI assistants to read `.reporose/map.json` for context. On invocation, it searches the repository root for any of the candidate filenames, returning the path and existence flag. If the file is missing it creates one populated solely with the default preamble wrapped in `<!-- reporose:start -->` and `<!-- reporose:end -->` markers. If the file exists but lacks the markers, the preamble is prepended; if the markers already exist the file is left untouched. The module exposes `ensurePreamble` (creating or updating the file), `getPreamble` (extracting the marker section), `findAgentsMd`, and constants for the markers and default text. This helper is used by the CLI command `reporose analyze` and possibly the web server’s content generation to embed the AI context instructions automatically without overriding user‑written content. It only performs local file system I/O; no network or auth actions are involved.",
+      "functions": {
+        "func_042_01": {
+          "description": ""
+        },
+        "func_042_02": {
+          "description": ""
+        },
+        "func_042_03": {
+          "description": ""
+        },
+        "func_042_04": {
+          "description": ""
+        },
+        "func_042_05": {
+          "description": ""
+        },
+        "func_042_06": {
+          "description": ""
+        },
+        "func_042_07": {
+          "description": ""
+        },
+        "func_042_08": {
+          "description": ""
+        },
+        "func_042_09": {
+          "description": ""
+        },
+        "func_042_10": {
+          "description": ""
+        }
+      }
+    },
+    "src/utils/dotenv.js": {
+      "hash": "b8723abd3ff936865214bce5474b9e4d",
+      "description": "The `loadDotenv` utility provides a lightweight replacement for the `dotenv` npm package; it reads a `.env` file (defaulting to the repository root) and parses KEY=VALUE pairs while supporting comments, bash‑style `export KEY=VALUE`, quoted values, and inline comments on unquoted values. It iterates over each line, strips whitespace and `export`, skips blank or comment lines, extracts the key and value, unescapes quotes, trims trailing inline comments, and writes the resulting key/value into an output object. For each parsed variable it also sets an entry in `process.env` only if that variable isn’t already defined, ensuring CLI or environment‑set flags win over the file. The function returns the plain key/value mapping and has a side‑effect of mutating the global environment; this is used by startup scripts (e.g., CLI commands and the Express server) to seed configuration before the rest of the",
+      "functions": {
+        "func_043_01": {
+          "description": ""
+        },
+        "func_043_02": {
+          "description": ""
+        },
+        "func_043_03": {
+          "description": ""
+        }
+      }
+    },
+    "src/utils/ignore.js": {
+      "hash": "ac49f0fc573ca5fefcc7e9ecc9720ab6",
+      "description": "The `ignore.js` module supplies a file‑ignoring mechanism for the Reporose scanner; it recursively walks the repository root, reads every `.gitignore` file, rewrites each pattern so it is anchored to the repo root (e.g., a `.gitignore` in `packages/foo` with `*.log` becomes `packages/foo/*.log`), and combines the results into a single `ignore` object alongside hard‑coded exclusions (`.git`, `node_modules`, `.reporose`). The `loadIgnore` function returns this matcher, which is accepted by the scanner cycle to filter out files or directories before parsing, while the helper `isIgnored` checks a specific path quickly by converting the absolute path",
+      "functions": {
+        "func_043_01": {
+          "description": ""
+        },
+        "func_043_02": {
+          "description": ""
+        },
+        "func_043_03": {
+          "description": ""
+        },
+        "func_043_04": {
+          "description": ""
+        },
+        "func_043_05": {
+          "description": ""
+        },
+        "func_043_06": {
+          "description": ""
+        },
+        "func_043_07": {
+          "description": ""
+        },
+        "func_043_08": {
+          "description": ""
+        }
+      }
+    },
+    "src/utils/secrets.js": {
+      "hash": "6fcc2e1c245ece6fba8e52e3a11efcb7",
+      "description": "The `secrets.js` module centralizes secure storage of API keys and sensitive tokens for Reporose, prioritizing an OS‑level keychain via the optional `keytar` library, then falling back to a private JSON file in the user’s home directory. It exposes `getSecret`, which reads a value from `process.env`, then from keytar, and finally from the JSON file, mutating `process.env` to surface the value to the current process. `setSecret` writes the value to keytar if available, otherwise to the file, and logs a notice only once when the file fallback is used; it also updates `process.env`",
+      "functions": {
+        "func_044_01": {
+          "description": ""
+        },
+        "func_044_02": {
+          "description": ""
+        },
+        "func_044_03": {
+          "description": ""
+        },
+        "func_044_04": {
+          "description": ""
+        },
+        "func_044_05": {
+          "description": ""
+        },
+        "func_044_06": {
+          "description": ""
+        },
+        "func_044_07": {
+          "description": ""
+        },
+        "func_044_08": {
+          "description": ""
+        },
+        "func_044_09": {
+          "description": ""
+        },
+        "func_044_10": {
+          "description": ""
+        },
+        "func_044_11": {
+          "description": ""
+        },
+        "func_044_12": {
+          "description": ""
+        },
+        "func_044_13": {
+          "description": ""
+        },
+        "func_044_14": {
+          "description": ""
+        },
+        "func_044_15": {
+          "description": ""
+        },
+        "func_044_16": {
+          "description": ""
+        },
+        "func_044_17": {
+          "description": ""
+        },
+        "func_044_18": {
+          "description": ""
+        }
+      }
+    },
+    "src/ai/local.js": {
+      "hash": "7efcb4cd6b81cd790ed8fc8a9d46cfa0",
+      "description": "The local.js module implements a “bring‑‑own‑model” AI provider for Reporose, using the optional node‑ll‑cpp library to run GGUF models locally. It resolves a tier configuration (low, medium, high) that context size, GPU layers, and token budgets, and it loads the specified model file via a dynamic ESM import, throwing a clear error message if the dependency or model is missing. Once loaded it creates a Llama context and, for each request, spins up a LlamaChatSession with tier‑specific system prompt, invokes the predict method with deterministic temperature, and trims the raw response to a tidy paragraph. The provider exposes `summarizeFile` and `summarizeFunction` functions that feed the prompt builders from `prompts.js` into the model, and a graceful `close` method that disposes of the context and model objects. It is used by the summation orchestration layer to generate file‑level descriptions when a local provider is selected, and it falls back to the heuristic provider if node‑llama‑cpp is unavailable. The code also exposes utility exports (`TIERS`, `resolveTier`) for external configuration and introspection.",
+      "functions": {
+        "func_021_01": {
+          "description": ""
+        },
+        "func_021_02": {
+          "description": ""
+        },
+        "func_021_03": {
+          "description": ""
+        },
+        "func_021_04": {
+          "description": ""
+        },
+        "func_021_05": {
+          "description": ""
+        },
+        "func_021_06": {
+          "description": ""
+        }
+      }
+    },
+    "tests/terminal.test.js": {
+      "hash": "9d899cf795cafb7989a4f41ef40e07e5",
+      "description": "The `tests/terminal.test.js` file is a unit test suite that validates the public API and edge‑case behavior of the `src/cli/terminal.js` UI helper used during `analyze` and `serve` CLI commands. It first confirms that all expected functions (`start`, `stop`, `log`, `warn`, `error`, `updateStats`, `setLiveAI`, `isSpammy",
+      "functions": {
+        "func_055_01": {
+          "description": ""
+        },
+        "func_055_02": {
+          "description": ""
+        },
+        "func_055_03": {
+          "description": ""
+        }
+      }
+    },
+    "src/server/server.js": {
+      "hash": "295a5d92bcf74157e233a771c5a2a7df",
+      "description": "The `server.js` module spins up an Express application that hosts the 3D repository map UI and exposes a small REST API for tooling and debugging. It lazily loads `map.json` (throwing a user‑friendly error if missing), and defines `/api/health`, `/api/graph`, `/api/search`, and `/api/node/:id` endpoints; the search route delegates to `./search` to return weighted autocomplete results while `/node/:id` walks the file, function, and package trees to embed link and import metadata via `buildFileDetail` and `buildFunctionDetail`. Static assets are served from `public/` and a fallback `index.html` is delivered on the root route, enabling the single‑page 3‑D visualizer to fetch graph data and render the navigation graph. Middleware supplies permissive CORS, rudimentary request logging, and a generic error handler that distinguishes 404s, missing map, and server errors. The `start` helper creates an HTTP server, resolves a free port with incremental fallback, and returns the URL for CLI or remote callers, making the module both importable (`createApp`) and executable (`start`).",
+      "functions": {
+        "func_040_01": {
+          "description": ""
+        },
+        "func_040_02": {
+          "description": ""
+        },
+        "func_040_03": {
+          "description": ""
+        },
+        "func_040_04": {
+          "description": ""
+        },
+        "func_040_05": {
+          "description": ""
+        },
+        "func_040_06": {
+          "description": ""
+        },
+        "func_040_07": {
+          "description": ""
+        },
+        "func_040_08": {
+          "description": ""
+        },
+        "func_040_09": {
+          "description": ""
+        },
+        "func_040_10": {
+          "description": ""
+        },
+        "func_040_11": {
+          "description": ""
+        },
+        "func_040_12": {
+          "description": ""
+        },
+        "func_040_13": {
+          "description": ""
+        },
+        "func_040_14": {
+          "description": ""
+        }
+      }
+    },
+    "src/core/scanner.js": {
+      "hash": "ad25db72d9fbd3d02890b019d276bf33",
+      "description": "The `scanner.js` module performs a full repository crawl to generate a canonical map of all files for Reporose, handling file‑ignoring via `loadIgnore`, walking directories with `walkRepository`, and reading every non‑ignored file to compute basic metadata (name, ID, size, hash, timestamps). Code files are parsed once into an AST with Babel and enriched with function names, imports, and exports, with a caching map keyed on file hash to avoid re‑parsing unchanged files; symlinks and unreadable files are logged and skipped. After the initial scan the module reads each code file’s full content, attaches it temporarily, and calls `enrichFiles` to add environment‑var usage, semantic tags, Next.js route paths, and transitive import maps; content is then stripped to keep the JSON compact. The returned object contains metadata (timestamps, repo path, counts), the enriched `files` array, a list of packages gathered from `package.json`, and placeholder arrays for networks, links, and circular dependencies that the `mapper.js` step later populates. This module is invoked by the CLI `analyze` command and by the Express server’s initial data load; downstream components such as the summarizer, mapper, and UI rely on its output. Key patterns include a hash‑based AST caching",
+      "functions": {
+        "func_034_01": {
+          "description": ""
+        },
+        "func_034_02": {
+          "description": ""
+        },
+        "func_034_03": {
+          "description": ""
+        },
+        "func_034_04": {
+          "description": ""
+        },
+        "func_034_05": {
+          "description": ""
+        },
+        "func_034_06": {
+          "description": ""
+        },
+        "func_034_07": {
+          "description": ""
+        },
+        "func_034_08": {
+          "description": ""
+        },
+        "func_034_09": {
+          "description": ""
+        },
+        "func_034_10": {
+          "description": ""
+        },
+        "func_034_11": {
+          "description": ""
+        },
+        "func_034_12": {
+          "description": ""
+        },
+        "func_034_13": {
+          "description": ""
+        },
+        "func_034_14": {
+          "description": ""
+        },
+        "func_034_15": {
+          "description": ""
+        },
+        "func_034_16": {
+          "description": ""
+        },
+        "func_034_17": {
+          "description": ""
+        },
+        "func_034_18": {
+          "description": ""
+        },
+        "func_034_19": {
+          "description": ""
+        },
+        "func_034_20": {
+          "description": ""
+        },
+        "func_034_21": {
+          "description": ""
+        },
+        "func_034_22": {
+          "description": ""
+        },
+        "func_034_23": {
+          "description": ""
+        },
+        "func_034_24": {
+          "description": ""
+        },
+        "func_034_25": {
+          "description": ""
+        },
+        "func_034_26": {
+          "description": ""
+        },
+        "func_034_27": {
+          "description": ""
+        }
+      }
+    },
+    "src/ai/anthropic.js": {
+      "hash": "3d0bd17e77358bf7f9792a04aecf6005",
+      "description": "The anthropic module implements the Anthropic AI provider for Reporose’s summarization workflow by exposing a createAnthropicProvider factory that returns a provider object with summarizeFile, summarizeFullFile, and summarizeFunction methods, each internally calling a shared messagesComplete helper that orchestrates HTTP POSTs to Anthropic’s `/messages` endpoint using `fetch`. It retrieves the API key securely via a cached secret lookup (`getSecret`) and throws a clear “ANTHROPIC_KEY_MISSING” error when absent, while respecting a configurable base URL, model, temperature, timeout, and context size; it defaults to the fastest ©haiku model and a conservative 100 k token context. The provider builds a system prompt tailored to the file type, function description, or full file chunk, and passes the rendered prompt (via `renderFilePrompt` / `renderFunctionPrompt`) into the request body; on success it parses either a regular JSON response or an SSE stream of `content_block_delta` events, trimming internal <think> tags and whitespace. Non‑streaming responses are decoded from the `content` array of text blocks, streamed updates emit incremental trimmed text through an optional `onStream` callback, and HTTP errors are surfaced with status and retry‑after",
+      "functions": {
+        "func_018_01": {
+          "description": ""
+        },
+        "func_018_02": {
+          "description": ""
+        },
+        "func_018_03": {
+          "description": ""
+        },
+        "func_018_04": {
+          "description": ""
+        },
+        "func_018_05": {
+          "description": ""
+        },
+        "func_018_06": {
+          "description": ""
+        },
+        "func_018_07": {
+          "description": ""
+        },
+        "func_018_08": {
+          "description": ""
+        }
+      }
+    },
+    "src/ai/ollama.js": {
+      "hash": "7ae0c22f254362e1bb4dbc9f2838da53",
+      "description": "The `ollama.js` module implements a resumable AI provider for Reporose that communicates with either a local `ollama` daemon or the Ollama cloud by exposing a `createOllamaProvider` factory, a `ping` health‑check, and generated constants. It depends on the local prompt generators (`renderFilePrompt` and `renderFunctionPrompt`) and the `../utils/secrets` helper to resolve API keys from an environment variable, OS‑level keychain, or a private JSON file, ensuring secure bearer authentication for cloud deployments. Inside the provider, the `summarizeFile`, `summarizeFullFile`, and `summarizeFunction` methods construct chat requests to `/api/chat`, applying a context‑size‑aware truncation strategy that preserves the first and last portions of a prompt, and then post‑process responses by stripping `<think>` blocks and common prefixes to yield a clean summary. The module performs",
+      "functions": {
+        "func_022_01": {
+          "description": ""
+        },
+        "func_022_02": {
+          "description": ""
+        },
+        "func_022_03": {
+          "description": ""
+        },
+        "func_022_04": {
+          "description": ""
+        },
+        "func_022_05": {
+          "description": ""
+        },
+        "func_022_06": {
+          "description": ""
+        },
+        "func_022_07": {
+          "description": ""
+        },
+        "func_022_08": {
+          "description": ""
+        },
+        "func_022_09": {
+          "description": ""
+        },
+        "func_022_10": {
+          "description": ""
+        },
+        "func_022_11": {
+          "description": ""
+        },
+        "func_022_12": {
+          "description": ""
+        },
+        "func_022_13": {
+          "description": ""
+        }
+      }
+    },
+    "src/ai/openai.js": {
+      "hash": "9e852e5b2c891b5149ad5c4a52fdc134",
+      "description": "The `openai.js` module implements a generic OpenAI‑compatible summarization provider used by Reporose’s summarizer. It exports a factory that builds a provider object exposed as a plugin, configurable with `base_url`, `api_key_env`, `model`, timeout, temperature, and custom headers (e.g., for OpenRouter). The provider fetches a secret key through `../utils/secrets` and throws a clear `OPENAI_KEY_MISSING` error if authentication is required but missing. It uses a lightweight `chatComplete` helper that sends a POST to `<base-url>/chat/completions`, applies a retry‑after logic parsed from both standard and Groq‑specific headers, supports JSON streaming via server‑sent events, and sanitizes unneeded `<think>` tags and whitespace. Rate‑limiting logic is optionally enabled for high‑throughput providers such as Groq by throttling requests based on a configurable `max_tpm` and `min_delay_ms`. The provider exposes `summarizeFile`, `summarizeFullFile`, and `summarizeFunction`, each calling the helper with prompts created by `./prompts` (`renderFilePrompt`, `renderFunctionPrompt`, and a pre‑built input for full files). These methods return concise, markdown‑free paragraphs of 5‑8 sentences, matching Reporose’s core summary style. The provider is integrated into the Summarizer orchestration layer (`src/ai/summarizer.js`)",
+      "functions": {
+        "func_023_01": {
+          "description": ""
+        },
+        "func_023_02": {
+          "description": ""
+        },
+        "func_023_03": {
+          "description": ""
+        },
+        "func_023_04": {
+          "description": ""
+        },
+        "func_023_05": {
+          "description": ""
+        },
+        "func_023_06": {
+          "description": ""
+        }
+      }
+    },
+    "tests/phase4.test.js": {
+      "hash": "7f94a365ec1fa5024f968d83e066709c",
+      "description": "The `phase4.test.js` file defines a suite of integration tests that validate the Phase 4 REST API surface of the RepoRose server. It uses Node’s test and assert modules to spin up a temporary repository layout, write a synthetic `.reporose/map.json`, and launch the Express application via `createApp`/`start`. After the server is ready, the tests hit `/api/health`, `/api/graph`, `/api/search`, and `/api/node/:id` endpoints, checking for 200 responses, correct JSON shape, and that search scoring respects file importance and search terms. The test suite also exercises the `loadDotenv` helper by asserting that environment variables in a `.env` file do not overwrite already‑set values, confirming the priority logic in `utils/dotenv`. The only side effect is the temporary file system write and server spin‑up, both cleaned up in a `finally` block. This module relies on `src/server/server.js`, the search logic in `src/server/search.js`, and the dotenv utility, and it ensures that the server’s endpoint implementations correctly consume the generated map, perform search scoring, and expose node details for the front‑end visualizer.",
+      "functions": {
+        "func_050_01": {
+          "description": ""
+        },
+        "func_050_02": {
+          "description": ""
+        },
+        "func_050_03": {
+          "description": ""
+        },
+        "func_050_04": {
+          "description": ""
+        },
+        "func_050_05": {
+          "description": ""
+        },
+        "func_050_06": {
+          "description": ""
+        },
+        "func_050_07": {
+          "description": ""
+        },
+        "func_050_08": {
+          "description": ""
+        },
+        "func_050_09": {
+          "description": ""
+        },
+        "func_050_10": {
+          "description": ""
+        },
+        "func_050_11": {
+          "description": ""
+        },
+        "func_050_12": {
+          "description": ""
+        },
+        "func_050_13": {
+          "description": ""
+        }
+      }
+    },
+    "src/mcp/server.js": {
+      "hash": "2534ad22dbafb438569dca8ea590db92",
+      "description": "The `src/mcp/server.js` file launches an MCP (Model Context Protocol) server that exposes the Reporose map, AGENTS.md, and a suite of analysis tools to AI agents over stdin/stdout; it imports `scan` and `mapDependencies` from the scan/mapper core modules and `loadConfig` from `ai/config` for optional configuration. Upon startup it creates an instance of `@modelcontextprotocol/sdk/server/index.js` with empty resource and tool capabilities, then registers four MCP request handlers: `ListResources`, which advertises the repository map and context file; `ReadResource`, which streams the requested JSON or markdown; `ListTools`, which lists six callable functions (`reporose_analyze`, `reporose_get_map`, `reporose_search_files`, `reporose_get_file`, `repor",
+      "functions": {
+        "func_035_01": {
+          "description": ""
+        },
+        "func_035_02": {
+          "description": ""
+        },
+        "func_035_03": {
+          "description": ""
+        }
+      }
+    },
+    "tests/mapper-extras.test.js": {
+      "hash": "7614575bf8305f7f350a17a108d9be1f",
+      "description": "This test module verifies the correctness of the dependency‑graph enrichment performed by `src/core/mapper.js` after a repository scan. It programmatically generates a temporary directory structure with various JavaScript, Markdown, and CSS files, uses `scan()` from `src/core/scanner` to produce a raw map, then calls `mapDependencies()` to enrich that map. The tests confirm that entry‑point files that import hub modules receive a non‑zero `importance_score`, isolated files have a score of zero, and non‑code files are included in isolated networks but not scored for importance. It also checks that a deep transitive import chain (A→B→C→D) propagates importance correctly, and that the overall `statistics.total_files` count includes all file types. The suite leverages Node’s built‑in `node:test` framework, `node:assert/strict`, and filesystem utilities to create and clean up temporary repos, ensuring no external network or auth logic is invoked. These tests serve as a safety net for changes to the mapper’s betweenness centrality calculation, network construction, and statistics",
+      "functions": {
+        "func_046_01": {
+          "description": ""
+        },
+        "func_046_02": {
+          "description": ""
+        },
+        "func_046_03": {
+          "description": ""
+        },
+        "func_046_04": {
+          "description": ""
+        },
+        "func_046_05": {
+          "description": ""
+        },
+        "func_046_06": {
+          "description": ""
+        },
+        "func_046_07": {
+          "description": ""
+        },
+        "func_046_08": {
+          "description": ""
+        },
+        "func_046_09": {
+          "description": ""
+        }
+      }
+    },
+    "tests/scanner-extras.test.js": {
+      "hash": "f678b203ecebc4fa66465c42395f8e27",
+      "description": "The `scanner-extras.test.js` file is a Node.js test harness that verifies the behavior of the `src/core/scanner.js` module. It creates temporary repositories with a mix of code files, documentation, styles, media, and binary artefacts, then invokes the `scan` function to ensure that code files are flagged `summarizable: true`, non‑code files are marked `false`, and that the metadata counters (`files_summarizable`, `files_analyzed`) reflect the correct counts. It asserts that non‑code files return empty arrays for `functions`, `imports`, and `exported`, and that binary/archive/font files are excluded from the scan output while media files",
+      "functions": {
+        "func_054_01": {
+          "description": ""
+        },
+        "func_054_02": {
+          "description": ""
+        },
+        "func_054_03": {
+          "description": ""
+        },
+        "func_054_04": {
+          "description": ""
+        },
+        "func_054_05": {
+          "description": ""
+        },
+        "func_054_06": {
+          "description": ""
+        },
+        "func_054_07": {
+          "description": ""
+        },
+        "func_054_08": {
+          "description": ""
+        }
+      }
+    },
+    "src/cli/init.js": {
+      "hash": "115dca05e1977855388020b63ecd6850",
+      "description": "The `init.js` module powers the Reporose CLI initialization wizard that runs when the user invokes `reporose init`. It presents a TTY‑based menu of AI providers (heuristic, ollama, openai, openrouter, local, none, anthropic, ollama‑cloud), uses the `prompt` subsystem to gather input, and then calls the corresponding `configureX` helper to populate a configuration object with provider‑specific options and credentials. After the provider is chosen it loads any existing repo‑specific config via `loadConfig`, merges it with the wizard’s choices, and writes the resulting config back to a `.reporose/config.json` file with `saveConfig`. A subsequent prompt offers to save this setup as a reusable preset using `savePreset`, and finally prompts the user whether to launch `reporose analyze` immediately; the wizard returns an object containing the path to the saved config, whether to run analyze, and the repository path. The code uses environmental API key discovery through `utils/secrets`, handles graceful aborts by throwing a sentinel error, and ensures TTY awareness with `prompt.createSession`. It is imported and executed by the CLI command `src/cli/",
+      "functions": {
+        "func_028_01": {
+          "description": ""
+        },
+        "func_028_02": {
+          "description": ""
+        },
+        "func_028_03": {
+          "description": ""
+        },
+        "func_028_04": {
+          "description": ""
+        },
+        "func_028_05": {
+          "description": ""
+        },
+        "func_028_06": {
+          "description": ""
+        },
+        "func_028_07": {
+          "description": ""
+        },
+        "func_028_08": {
+          "description": ""
+        },
+        "func_028_09": {
+          "description": ""
+        },
+        "func_028_10": {
+          "description": ""
+        },
+        "func_028_11": {
+          "description": ""
+        },
+        "func_028_12": {
+          "description": ""
+        },
+        "func_028_13": {
+          "description": ""
+        }
+      }
+    },
+    "tests/phase6.test.js": {
+      "hash": "e6f094c79bc14dd47b2bdb5f569abec8",
+      "description": "This test suite verifies the new AI provider integration and AGENTS.md context propagation for Reporose’s summarization pipeline. It exercises the Anthropic, Ollama Cloud, and local tier providers by spinning up in‑process HTTP servers to capture request headers, payloads, and responses, ensuring that authorization headers, model IDs, and JSON payloads are correctly formed and that retry‑after handling and error propagation work as expected. It also tests the configuration helper functions—`applyModelFlag`, `applyApiKeyEnv`, and `presetModelLabel`—to confirm that provider selection, API key routing, and default model resolution correctly mutate the config object. The local tier constants are validated for monotonic and the `resolveTier` fallback logic. Finally, it performs an end‑to‑end summarization of a temporary repo, confirming that the `buildFileInput`/`renderFilePrompt` functions embed the AGENTS.md content into prompts when the model’s context window allows, and that the summarizer dispatches the correct prompt",
+      "functions": {
+        "func_052_01": {
+          "description": ""
+        },
+        "func_052_02": {
+          "description": ""
+        },
+        "func_052_03": {
+          "description": ""
+        },
+        "func_052_04": {
+          "description": ""
+        },
+        "func_052_05": {
+          "description": ""
+        },
+        "func_052_06": {
+          "description": ""
+        },
+        "func_052_07": {
+          "description": ""
+        },
+        "func_052_08": {
+          "description": ""
+        }
+      }
+    },
+    "src/ai/openrouter.js": {
+      "hash": "943fab0de8b1d919500bf5335ee7658a",
+      "description": "The `openrouter.js` module exposes a factory that builds a light‑weight OpenAI‑compatible provider for the OpenRouter API, using the generic `createOpenAIProvider` helper from `src/ai/openai.js`. It bundles a preconfigured base URL (`https://openrouter.ai/api/v1`), default model (`meta‑llama/llama‑3.2‑3b‑instruct:free`), and environment‑variable name (`OPENROUTER_API_KEY`) required for authentication, while allowing these to be overridden via the `cfg` object. The produced provider inherits all capabilities of the generic OpenAI wrapper—chat completion requests, retry-after logic, optional throttling, and streaming support—so that the rest of the system can call `summarizeFile`, `summarizeFullFile`, and `summarizeFunction`",
+      "functions": {
+        "func_024_01": {
+          "description": ""
+        },
+        "func_024_02": {
+          "description": ""
+        },
+        "func_024_03": {
+          "description": ""
+        },
+        "func_024_04": {
+          "description": ""
+        }
+      }
+    },
+    "src/ai/summarizer.js": {
+      "hash": "75e440c6c0472481d47298ab1ae38a36",
+      "description": "Summarizer.js is the core orchestrator of Reporose’s Phase 3 “summarize” step, invoked by the CLI’s analyze command to enrich the file‑metadata map with AI‑generated descriptions; it selects an AI provider (heuristic, ollama, openai, etc.) via selectProvider, loads or builds a per‑repo cache, ensures the standard AGENTS.md preamble is present, and then walks the file list ordered by dependency depth. For each code file it builds a prompt with buildFileInput or buildFullFileInput (using prompt templates from prompts",
+      "functions": {
+        "func_026_01": {
+          "description": ""
+        },
+        "func_026_02": {
+          "description": ""
+        },
+        "func_026_03": {
+          "description": ""
+        },
+        "func_026_04": {
+          "description": ""
+        },
+        "func_026_05": {
+          "description": ""
+        },
+        "func_026_06": {
+          "description": ""
+        },
+        "func_026_07": {
+          "description": ""
+        },
+        "func_026_08": {
+          "description": ""
+        },
+        "func_026_09": {
+          "description": ""
+        },
+        "func_026_10": {
+          "description": ""
+        },
+        "func_026_11": {
+          "description": ""
+        },
+        "func_026_12": {
+          "description": ""
+        },
+        "func_026_13": {
+          "description": ""
+        },
+        "func_026_14": {
+          "description": ""
+        },
+        "func_026_15": {
+          "description": ""
+        },
+        "func_026_16": {
+          "description": ""
+        },
+        "func_026_17": {
+          "description": ""
+        },
+        "func_026_18": {
+          "description": ""
+        },
+        "func_026_19": {
+          "description": ""
+        },
+        "func_026_20": {
+          "description": ""
+        },
+        "func_026_21": {
+          "description": ""
+        },
+        "func_026_22": {
+          "description": ""
+        },
+        "func_026_23": {
+          "description": ""
+        },
+        "func_026_24": {
+          "description": ""
+        },
+        "func_026_25": {
+          "description": ""
+        },
+        "func_026_26": {
+          "description": ""
+        }
+      }
+    },
+    "src/cli/commands.js": {
+      "hash": "142b85388ba71584a417618af6dae890",
+      "description": "",
+      "functions": {
+        "func_028_01": {
+          "description": ""
+        },
+        "func_028_02": {
+          "description": ""
+        },
+        "func_028_03": {
+          "description": ""
+        },
+        "func_028_04": {
+          "description": ""
+        },
+        "func_028_05": {
+          "description": ""
+        },
+        "func_028_06": {
+          "description": ""
+        },
+        "func_028_07": {
+          "description": ""
+        },
+        "func_028_08": {
+          "description": ""
+        },
+        "func_028_09": {
+          "description": ""
+        },
+        "func_028_10": {
+          "description": ""
+        },
+        "func_028_11": {
+          "description": ""
+        },
+        "func_028_12": {
+          "description": ""
+        },
+        "func_028_13": {
+          "description": ""
+        },
+        "func_028_14": {
+          "description": ""
+        },
+        "func_028_15": {
+          "description": ""
+        },
+        "func_028_16": {
+          "description": ""
+        },
+        "func_028_17": {
+          "description": ""
+        },
+        "func_028_18": {
+          "description": ""
+        }
+      }
+    },
+    "tests/phase5.test.js": {
+      "hash": "667ee6d47a9e7b8fb0dba951249ebd1c",
+      "description": "The test suite validates the repository initialization wizard, which runs as `node bin/cli.js init <repo>` and writes a `.reporose/config.json` file based on user‑chosen AI provider. It starts by spawning a child process that feeds simulated stdin answers to the interactive wizard, ensuring the same code paths are exercised as in a real terminal session. The tests cover all provider selections: heuristic, none, OpenAI, and OpenRouter, verifying that the appropriate provider name and default fields (`base_url`, `model`, `api_key_env`) are persisted correctly. They also check that a blank answer for the env variable defaults to the expected key (`OPENAI_API_KEY` or `OPENROUTER_API_KEY`) and that no preset or analysis calls are triggered when the wizard finalizes. An error path is exercised by feeding an illegal provider choice (e.g., “99”) followed by a valid one; the test asserts the wizard re‑prompts and ultimately writes the correct config. The suite relies on",
+      "functions": {
+        "func_051_01": {
+          "description": ""
+        },
+        "func_051_02": {
+          "description": ""
+        },
+        "func_051_03": {
+          "description": ""
+        },
+        "func_051_04": {
+          "description": ""
+        },
+        "func_051_05": {
+          "description": ""
+        },
+        "func_051_06": {
+          "description": ""
+        },
+        "func_051_07": {
+          "description": ""
+        },
+        "func_051_08": {
+          "description": ""
+        },
+        "func_051_09": {
+          "description": ""
+        }
+      }
+    },
+    "tests/ratelimit.test.js": {
+      "hash": "ab73d2026c016d1da2f012b76d01b4ed",
+      "description": "This test suite validates the resilience logic of the OpenAI‑compatible provider used by Reporose’s summarizer. It directly exercises the request wrapper in `src/ai/openai.js`, verifying that a 429 response with a `retry‑after` header or Groq‑style `x‑ratelimit‑reset‑tokens` header yields a parsed `retryAfter` value in the thrown error, and that the provider correctly retries or propagates that value. A mock HTTP server feeds controlled responses, allowing the suite to assert that the provider parses the maximum reset duration (e.g., 90 000 ms from a 1 m 30 s header) and that a Groq‑specific 7.66 s header is converted to 7 660 ms. The SSE streaming path is tested by emitting a series of Server‑Sent Events that the provider must concatenate and forward",
+      "functions": {
+        "func_053_01": {
+          "description": ""
+        },
+        "func_053_02": {
+          "description": ""
+        },
+        "func_053_03": {
+          "description": ""
+        },
+        "func_053_04": {
+          "description": ""
+        }
+      }
+    },
+    "bin/cli.js": {
+      "hash": "bfc04220b447aeb3503621ca61a5432b",
+      "description": "The `bin/cli.js` script is the repo's command‑line entry point, executed when a user runs `reporose …`. It first resolves the current working directory, loads any `.env` file there with `loadDotenv`, and then parses the remaining CLI arguments (`process.argv.slice(2)`). The parsed arguments are passed to the `run` function exported from `src/cli/commands`, which orchestrates the various sub‑commands (`init`, `analyze`, `map`, `summarize`, `serve`, `config`, `preset`). `run` returns a Promise that resolves to an optional exit code; the script exits with that code or silently exits if no code is returned. Errors from `run` are caught, logged to standard output prefixed with `[reporose]`, and trigger an exit code of `1`. This module has no UI components; it purely bootstraps the CLI workflow, wiring environment setup to the command dispatcher and handling process exit logic.",
+      "functions": {
+        "func_007_01": {
+          "description": ""
+        },
+        "func_007_02": {
+          "description": ""
+        }
+      }
+    },
+    "tests/phase1.test.js": {
+      "hash": "9d254394ee7c037bc6e2e72da2d3630f",
+      "description": "This file bundles a comprehensive suite of unit tests that exercise the core repository scanner (`src/core/scanner.js`) and the CLI analyze command (`src/cli/commands.js`). Each test creates a transient fixture repository via `makeRepo`, runs `scan` (or `analyze`), and asserts that the resulting map correctly identifies file types, languages, imports, exports, functions, classes, interfaces, and constants, while also computing MD5 hashes and building a package list from `package.json`. It validates that the scanner respects `.gitignore` rules, ignores `node_modules`, and ignores entries tracked by `loadIgnore`, correctly tracks ignored‑file counts, and handles malformed JavaScript without crashing. The tests also confirm that the scanner’s `extractFromAst` routine records accurate import line numbers and distinguishes package versus file imports. By verifying the JSON‑output of the CLI command and ensuring the output path, format version, and metadata counts match the in‑memory map, this suite guarantees that the scanner‑CLI integration produces a",
+      "functions": {
+        "func_047_01": {
+          "description": ""
+        },
+        "func_047_02": {
+          "description": ""
+        },
+        "func_047_03": {
+          "description": ""
+        },
+        "func_047_04": {
+          "description": ""
+        },
+        "func_047_05": {
+          "description": ""
+        },
+        "func_047_06": {
+          "description": ""
+        },
+        "func_047_07": {
+          "description": ""
+        },
+        "func_047_08": {
+          "description": ""
+        },
+        "func_047_09": {
+          "description": ""
+        }
+      }
+    },
+    "tests/phase2.test.js": {
+      "hash": "d2eb3774f52e085b821511d31f832588",
+      "description": "This test file is a unit‑level test suite that guarantees the integrity of Reporose’s Phase 2 mapping engine; it does not render UI or provide API endpoints. It creates temporary repositories, runs the scanner to generate a base map, then invokes the mapper to enrich the file list with direct, package, indirect, and circular links, compute importance scores, betweenness centrality, network groups, and aggregate statistics. The test harness calls CLI `analyze` and `map` commands to verify that the CLI pipelines invoke mapper with correct options (e.g., `--no-map` skips enrichment) and that on‑disk JSON matches the in‑memory structure. Key logic exercised includes `buildFileIndex`, `resolveFileImport`, `findSCCs` for cycle detection, weight calculation using the",
+      "functions": {
+        "func_048_01": {
+          "description": ""
+        },
+        "func_048_02": {
+          "description": ""
+        },
+        "func_048_03": {
+          "description": ""
+        },
+        "func_048_04": {
+          "description": ""
+        },
+        "func_048_05": {
+          "description": ""
+        },
+        "func_048_06": {
+          "description": ""
+        },
+        "func_048_07": {
+          "description": ""
+        },
+        "func_048_08": {
+          "description": ""
+        },
+        "func_048_09": {
+          "description": ""
+        },
+        "func_048_10": {
+          "description": ""
+        }
+      }
+    },
+    "tests/phase3.test.js": {
+      "hash": "34535802599eeba3cc0dd80ada98fcee",
+      "description": "The `phase3.test.js` unit‑suite validates Reporose’s Phase‑3 summarization workflow, exercising provider selection logic, AI‑triggered description generation, and concurrency utilities. It imports the core scanner, mapper, and summarizer modules, along with the heuristic provider, config system, prompt builder and CLI commands, and uses the Node test harness to orchestrate end‑to‑end checks. The test suite creates an in‑memory test repository, runs a scan/mapper cycle to obtain a baseline map, then invokes the `summarizer` with carefully controlled config objects that set `",
+      "functions": {
+        "func_049_01": {
+          "description": ""
+        },
+        "func_049_02": {
+          "description": ""
+        },
+        "func_049_03": {
+          "description": ""
+        },
+        "func_049_04": {
+          "description": ""
+        },
+        "func_049_05": {
+          "description": ""
+        },
+        "func_049_06": {
+          "description": ""
+        },
+        "func_049_07": {
+          "description": ""
+        },
+        "func_049_08": {
+          "description": ""
+        }
+      }
+    }
+  }
+}

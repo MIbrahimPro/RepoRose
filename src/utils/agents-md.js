@@ -18,6 +18,8 @@ const END_MARKER = '<!-- reporose:end -->';
 
 const DEFAULT_PREAMBLE = `${START_MARKER}
 > **AI agents:** read \`.reporose/map.json\` for the full file map, dependency graph, and per-file descriptions. Use it as your project context before answering questions about this repo.
+>
+> **Note:** If you make changes to files, you can regenerate the map (and thus update file descriptions) by running \`reporose analyze\` again in the project root.
 ${END_MARKER}`;
 
 const CANDIDATE_NAMES = ['AGENTS.md', 'agents.md', 'Agents.md', 'AGENTS.MD', 'context.md', 'CONTEXT.md'];
