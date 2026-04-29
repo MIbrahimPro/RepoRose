@@ -1,0 +1,19 @@
+{
+  "name": "RepoRose",
+  "short_name": "RepoRose",
+  "icons": [
+    {
+      "src": "/logo/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#EC7FA9",
+  "background_color": "#FFEDFA",
+  "display": "standalone"
+}

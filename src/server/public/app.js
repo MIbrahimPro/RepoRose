@@ -33,17 +33,18 @@ uses 3d-force-graph library (thats where most of the magic happens)
 /* Constants                                                           */
 /* ================================================================== */
 
+/* Align with serve UI tokens (brand rose palette + readable accents) */
 const COLORS = {
-  code: '#1f77e8',
+  code: '#be5985',
   package: '#2ca02c',
   config: '#9467bd',
-  docs: '#ff7f0e',
-  media: '#ff7f0e',
+  docs: '#d97706',
+  media: '#d97706',
   style: '#9467bd',
   database: '#9467bd',
-  other: '#1f77e8',
-  isolated: '#999999',
-  function: '#5fa8ff',
+  other: '#be5985',
+  isolated: '#a89098',
+  function: '#ec7fa9',
 };
 
 const PHYSICS_DEFAULTS = { gravity: 0.5, bounce: 0.8, friction: 0.3, link: 0.6 };
@@ -473,7 +474,7 @@ function isDark() {
 }
 
 function edgeColor() {
-  return isDark() ? '#404040' : '#dadce0';
+  return isDark() ? '#5c3d4d' : '#d9a9c3';
 }
 
 function initGraph() {
@@ -485,7 +486,7 @@ function initGraph() {
   // 3d-force-graph 1.80.x signature: `new ForceGraph3D(container, { controlType, ... })`.
   // The old `ForceGraph3D(config)(container)` curried form was removed.
   state.graph = new ForceGraph3D(container, { controlType: state.options.controls })
-    .backgroundColor(isDark() ? '#0f0f0f' : '#ffffff')
+    .backgroundColor(isDark() ? '#1a050f' : '#ffedfa')
     .nodeRelSize(4)
     .nodeColor(nodeColor)
     .nodeVal(nodeSize)
@@ -974,7 +975,7 @@ function applyTheme(theme) {
   document.documentElement.dataset.theme = theme;
   $('#theme-toggle').textContent = theme === 'dark' ? '🌙' : '☀️';
   if (state.graph) {
-    state.graph.backgroundColor(theme === 'dark' ? '#0f0f0f' : '#ffffff');
+    state.graph.backgroundColor(theme === 'dark' ? '#1a050f' : '#ffedfa');
     state.graph.linkColor(edgeColor);
   }
   try { localStorage.setItem('reporose-theme', theme); } catch (_e) {}

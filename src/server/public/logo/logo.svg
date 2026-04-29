@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="300" height="300">
+  <defs>
+    <!-- Gradient for outer petals (light pink) -->
+    <radialGradient id="outerPetalGradient" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#FFC0CB" />
+      <stop offset="100%" stop-color="#FF69B4" />
+    </radialGradient>
+
+    <!-- Gradient for middle petals (medium pink) -->
+    <radialGradient id="midPetalGradient" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#FF69B4" />
+      <stop offset="100%" stop-color="#DB7093" />
+    </radialGradient>
+
+    <!-- Gradient for inner petals (deep pink) -->
+    <radialGradient id="innerPetalGradient" cx="50%" cy="50%" r="80%">
+      <stop offset="0%" stop-color="#FF1493" />
+      <stop offset="100%" stop-color="#C71585" />
+    </radialGradient>
+
+    <!-- Gradient for the center -->
+    <radialGradient id="centerGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FF69B4" />
+      <stop offset="100%" stop-color="#8B008B" />
+    </radialGradient>
+
+    <!-- Soft shadow filter -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="1" dy="1" stdDeviation="2" flood-color="#000" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <!-- Background circle (optional, gives a subtle base) -->
+  <circle cx="100" cy="100" r="90" fill="#FFF0F5" opacity="0.5"/>
+
+  <!-- ============ OUTER PETALS ============ -->
+  <g filter="url(#shadow)">
+    <!-- 8 outer petals rotated around the center -->
+    <path d="M100,100 C90,70 60,80 70,50 C75,30 110,30 120,50 C130,70 110,90 100,100" 
+          fill="url(#outerPetalGradient)" opacity="0.9" transform="rotate(0,100,100)"/>
+    <path d="M100,100 C90,70 60,80 70,50 C75,30 110,30 120,50 C130,70 110,90 100,100" 
+          fill="url(#outerPetalGradient)" opacity="0.9" transform="rotate(45,100,100)"/>
+    <path d="M100,100 C90,70 60,80 70,50 C75,30 110,30 120,50 C130,70 110,90 100,100" 
+          fill="url(#outerPetalGradient)" opacity="0.9" transform="rotate(90,100,100)"/>
+    <path d="M100,100 C90,70 60,80 70,50 C75,30 110,30 120,50 C130,70 110,90 100,100" 
+          fill="url(#outerPetalGradient)" opacity="0.9" transform="rotate(135,100,100)"/>
+    <path d="M100,100 C90,70 60,80 70,50 C75,30 110,30 120,50 C130,70 110,90 100,100" 
+          fill="url(#outerPetalGradient)" opacity="0.9" transform="rotate(180,100,100)"/>
+    <path d="M100,100 C90,70 60,80 70,50 C75,30 110,30 120,50 C130,70 110,90 100,100" 
+          fill="url(#outerPetalGradient)" opacity="0.9" transform="rotate(225,100,100)"/>
+    <path d="M100,100 C90,70 60,80 70,50 C75,30 110,30 120,50 C130,70 110,90 100,100" 
+          fill="url(#outerPetalGradient)" opacity="0.9" transform="rotate(270,100,100)"/>
+    <path d="M100,100 C90,70 60,80 70,50 C75,30 110,30 120,50 C130,70 110,90 100,100" 
+          fill="url(#outerPetalGradient)" opacity="0.9" transform="rotate(315,100,100)"/>
+  </g>
+
+  <!-- ============ MIDDLE PETALS ============ -->
+  <g filter="url(#shadow)">
+    <!-- 8 middle petals (slightly smaller, more curved) -->
+    <path d="M100,100 C92,75 70,78 75,58 C78,42 108,42 115,58 C122,75 108,92 100,100" 
+          fill="url(#midPetalGradient)" opacity="0.95" transform="rotate(22.5,100,100)"/>
+    <path d="M100,100 C92,75 70,78 75,58 C78,42 108,42 115,58 C122,75 108,92 100,100" 
+          fill="url(#midPetalGradient)" opacity="0.95" transform="rotate(67.5,100,100)"/>
+    <path d="M100,100 C92,75 70,78 75,58 C78,42 108,42 115,58 C122,75 108,92 100,100" 
+          fill="url(#midPetalGradient)" opacity="0.95" transform="rotate(112.5,100,100)"/>
+    <path d="M100,100 C92,75 70,78 75,58 C78,42 108,42 115,58 C122,75 108,92 100,100" 
+          fill="url(#midPetalGradient)" opacity="0.95" transform="rotate(157.5,100,100)"/>
+    <path d="M100,100 C92,75 70,78 75,58 C78,42 108,42 115,58 C122,75 108,92 100,100" 
+          fill="url(#midPetalGradient)" opacity="0.95" transform="rotate(202.5,100,100)"/>
+    <path d="M100,100 C92,75 70,78 75,58 C78,42 108,42 115,58 C122,75 108,92 100,100" 
+          fill="url(#midPetalGradient)" opacity="0.95" transform="rotate(247.5,100,100)"/>
+    <path d="M100,100 C92,75 70,78 75,58 C78,42 108,42 115,58 C122,75 108,92 100,100" 
+          fill="url(#midPetalGradient)" opacity="0.95" transform="rotate(292.5,100,100)"/>
+    <path d="M100,100 C92,75 70,78 75,58 C78,42 108,42 115,58 C122,75 108,92 100,100" 
+          fill="url(#midPetalGradient)" opacity="0.95" transform="rotate(337.5,100,100)"/>
+  </g>
+
+  <!-- ============ INNER PETALS ============ -->
+  <g filter="url(#shadow)">
+    <!-- 6 inner petals (smaller, darker) -->
+    <path d="M100,100 C94,80 78,82 80,68 C82,56 106,56 112,68 C118,80 106,94 100,100" 
+          fill="url(#innerPetalGradient)" transform="rotate(15,100,100)"/>
+    <path d="M100,100 C94,80 78,82 80,68 C82,56 106,56 112,68 C118,80 106,94 100,100" 
+          fill="url(#innerPetalGradient)" transform="rotate(75,100,100)"/>
+    <path d="M100,100 C94,80 78,82 80,68 C82,56 106,56 112,68 C118,80 106,94 100,100" 
+          fill="url(#innerPetalGradient)" transform="rotate(135,100,100)"/>
+    <path d="M100,100 C94,80 78,82 80,68 C82,56 106,56 112,68 C118,80 106,94 100,100" 
+          fill="url(#innerPetalGradient)" transform="rotate(195,100,100)"/>
+    <path d="M100,100 C94,80 78,82 80,68 C82,56 106,56 112,68 C118,80 106,94 100,100" 
+          fill="url(#innerPetalGradient)" transform="rotate(255,100,100)"/>
+    <path d="M100,100 C94,80 78,82 80,68 C82,56 106,56 112,68 C118,80 106,94 100,100" 
+          fill="url(#innerPetalGradient)" transform="rotate(315,100,100)"/>
+  </g>
+
+  <!-- ============ CENTER (SPIRAL) ============ -->
+  <g filter="url(#shadow)">
+    <!-- Center bud with a spiral shape -->
+    <circle cx="100" cy="100" r="12" fill="url(#centerGradient)" />
+    <!-- Spiral petals inside the bud -->
+    <path d="M100,100 C102,96 106,96 106,100 C106,104 100,108 96,106" 
+          fill="#FFB6C1" opacity="0.8" transform="rotate(0,100,100)"/>
+    <path d="M100,100 C102,96 106,96 106,100 C106,104 100,108 96,106" 
+          fill="#FFB6C1" opacity="0.8" transform="rotate(60,100,100)"/>
+    <path d="M100,100 C102,96 106,96 106,100 C106,104 100,108 96,106" 
+          fill="#FFB6C1" opacity="0.8" transform="rotate(120,100,100)"/>
+    <path d="M100,100 C102,96 106,96 106,100 C106,104 100,108 96,106" 
+          fill="#FFB6C1" opacity="0.8" transform="rotate(180,100,100)"/>
+    <path d="M100,100 C102,96 106,96 106,100 C106,104 100,108 96,106" 
+          fill="#FFB6C1" opacity="0.8" transform="rotate(240,100,100)"/>
+    <path d="M100,100 C102,96 106,96 106,100 C106,104 100,108 96,106" 
+          fill="#FFB6C1" opacity="0.8" transform="rotate(300,100,100)"/>
+  </g>
+</svg>
