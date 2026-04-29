@@ -2,7 +2,7 @@
 ---
 A CLI tool that scans any codebase, maps its dependency graph, generates AI-powered summaries, and serves an interactive 3D visualization in your browser.
 
-Web: www.reporose.tech
+Visit us at www.reporose.tech
 
 > Be 'real', speak with heart.
  
