@@ -3,15 +3,33 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#EC7FA9" />
     <title>RepoRose</title>
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='28'%3E%F0%9F%8C%B9%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Red+Rose:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="/logo/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/logo/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/logo/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/logo/apple-touch-icon.png" />
+    <link rel="manifest" href="/logo/site.webmanifest" />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
     <!-- Top nav ------------------------------------------------------ -->
     <header id="top-nav">
       <button class="logo" id="logo-btn" type="button" title="Reset view">
-        <span class="logo-icon">🌹</span>
+        <img
+          class="logo-img"
+          src="/logo/logo.svg"
+          width="48"
+          height="48"
+          alt=""
+          decoding="async"
+        />
         <span class="logo-text">RepoRose</span>
       </button>
 
@@ -47,8 +65,8 @@
     <div id="network-picker" class="overlay picker-overlay" hidden>
       <div class="picker-card">
         <header class="picker-header">
-          <h2>Pick a network to explore</h2>
-          <p class="muted">
+          <h2 class="picker-title-brand">Pick a network to explore</h2>
+          <p class="muted picker-desc">
             Your repo splits into one or more disconnected graphs. Start with the
             <strong>main network</strong> for the core code, or jump into an
             isolated cluster.
@@ -121,13 +139,13 @@
       </header>
       <div class="panel-body">
         <section class="section">
-          <h3>📍 Location</h3>
+          <h3><span class="section-num">01.</span> Location</h3>
           <p class="mono" id="detail-path">—</p>
           <p class="muted" id="detail-language"></p>
         </section>
 
         <section class="section">
-          <h3>📊 Metrics</h3>
+          <h3><span class="section-num">02.</span> Metrics</h3>
           <p>Importance: <strong id="detail-importance">—</strong> <span id="detail-importance-tier" class="muted"></span></p>
           <p>Used by: <strong id="detail-incoming">—</strong> files</p>
           <p>Uses: <strong id="detail-outgoing">—</strong> files</p>
@@ -135,27 +153,27 @@
         </section>
 
         <section class="section">
-          <h3>📝 Description</h3>
+          <h3><span class="section-num">03.</span> Description</h3>
           <p id="detail-description">—</p>
         </section>
 
         <section class="section">
-          <h3>🔗 Imports</h3>
+          <h3><span class="section-num">04.</span> Imports</h3>
           <ul id="detail-imports" class="link-list"></ul>
         </section>
 
         <section class="section">
-          <h3>⬅️ Imported by</h3>
+          <h3><span class="section-num">05.</span> Imported by</h3>
           <ul id="detail-incoming-list" class="link-list"></ul>
         </section>
 
         <section class="section">
-          <h3>📦 Packages</h3>
+          <h3><span class="section-num">06.</span> Packages</h3>
           <ul id="detail-packages" class="link-list"></ul>
         </section>
 
         <section class="section">
-          <h3>ƒ Functions</h3>
+          <h3><span class="section-num">07.</span> Functions</h3>
           <ul id="detail-functions" class="link-list"></ul>
         </section>
       </div>

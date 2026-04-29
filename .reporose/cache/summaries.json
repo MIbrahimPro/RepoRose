@@ -551,199 +551,199 @@
       }
     },
     "src/server/public/app.js": {
-      "hash": "3f8863df74d71f057c83f6ad7281abdd",
-      "description": "src/server/public/app.js powers the Reporose 3D graph viewer that runs entirely in the browser; it binds UI controls for network navigation, settings, export, and a help panel, fetches the graph map from the server’s `/api/graph` endpoint, builds an interactive force‑directed graph with `3d-force-graph`, and updates the display as users manipulate physics presets or network selections. It manages a global `state` object that holds the parsed map, current networks, graph instance, physics options, key‑hold set, and UI flags; helper functions like `buildGraphData`, `buildNetworks`, `populateNetworkSelect`, and `initGraph` are defined in earlier parts of the file. Keyboard shortcuts (Ctrl/Cmd‑K for search, Esc for panel toggling, space/Shift for vertical camera movement, and '?' for help) are wired to event listeners, with a periodic loop applying continuous movement. Export utilities create a downloadable JSON representation of the map or a PNG",
+      "hash": "1a69e70eeec5a25a76ccc8df152f82f9",
+      "description": "The file drives the Reporose web client’s interactive graph view, wiring UI controls to a",
       "functions": {
-        "func_036_01": {
+        "func_045_01": {
           "description": ""
         },
-        "func_036_02": {
+        "func_045_02": {
           "description": ""
         },
-        "func_036_03": {
+        "func_045_03": {
           "description": ""
         },
-        "func_036_04": {
+        "func_045_04": {
           "description": ""
         },
-        "func_036_05": {
+        "func_045_05": {
           "description": ""
         },
-        "func_036_06": {
+        "func_045_06": {
           "description": ""
         },
-        "func_036_07": {
+        "func_045_07": {
           "description": ""
         },
-        "func_036_08": {
+        "func_045_08": {
           "description": ""
         },
-        "func_036_09": {
+        "func_045_09": {
           "description": ""
         },
-        "func_036_10": {
+        "func_045_10": {
           "description": ""
         },
-        "func_036_11": {
+        "func_045_11": {
           "description": ""
         },
-        "func_036_12": {
+        "func_045_12": {
           "description": ""
         },
-        "func_036_13": {
+        "func_045_13": {
           "description": ""
         },
-        "func_036_14": {
+        "func_045_14": {
           "description": ""
         },
-        "func_036_15": {
+        "func_045_15": {
           "description": ""
         },
-        "func_036_16": {
+        "func_045_16": {
           "description": ""
         },
-        "func_036_17": {
+        "func_045_17": {
           "description": ""
         },
-        "func_036_18": {
+        "func_045_18": {
           "description": ""
         },
-        "func_036_19": {
+        "func_045_19": {
           "description": ""
         },
-        "func_036_20": {
+        "func_045_20": {
           "description": ""
         },
-        "func_036_21": {
+        "func_045_21": {
           "description": ""
         },
-        "func_036_22": {
+        "func_045_22": {
           "description": ""
         },
-        "func_036_23": {
+        "func_045_23": {
           "description": ""
         },
-        "func_036_24": {
+        "func_045_24": {
           "description": ""
         },
-        "func_036_25": {
+        "func_045_25": {
           "description": ""
         },
-        "func_036_26": {
+        "func_045_26": {
           "description": ""
         },
-        "func_036_27": {
+        "func_045_27": {
           "description": ""
         },
-        "func_036_28": {
+        "func_045_28": {
           "description": ""
         },
-        "func_036_29": {
+        "func_045_29": {
           "description": ""
         },
-        "func_036_30": {
+        "func_045_30": {
           "description": ""
         },
-        "func_036_31": {
+        "func_045_31": {
           "description": ""
         },
-        "func_036_32": {
+        "func_045_32": {
           "description": ""
         },
-        "func_036_33": {
+        "func_045_33": {
           "description": ""
         },
-        "func_036_34": {
+        "func_045_34": {
           "description": ""
         },
-        "func_036_35": {
+        "func_045_35": {
           "description": ""
         },
-        "func_036_36": {
+        "func_045_36": {
           "description": ""
         },
-        "func_036_37": {
+        "func_045_37": {
           "description": ""
         },
-        "func_036_38": {
+        "func_045_38": {
           "description": ""
         },
-        "func_036_39": {
+        "func_045_39": {
           "description": ""
         },
-        "func_036_40": {
+        "func_045_40": {
           "description": ""
         },
-        "func_036_41": {
+        "func_045_41": {
           "description": ""
         },
-        "func_036_42": {
+        "func_045_42": {
           "description": ""
         },
-        "func_036_43": {
+        "func_045_43": {
           "description": ""
         },
-        "func_036_44": {
+        "func_045_44": {
           "description": ""
         },
-        "func_036_45": {
+        "func_045_45": {
           "description": ""
         },
-        "func_036_46": {
+        "func_045_46": {
           "description": ""
         },
-        "func_036_47": {
+        "func_045_47": {
           "description": ""
         },
-        "func_036_48": {
+        "func_045_48": {
           "description": ""
         },
-        "func_036_49": {
+        "func_045_49": {
           "description": ""
         },
-        "func_036_50": {
+        "func_045_50": {
           "description": ""
         },
-        "func_036_51": {
+        "func_045_51": {
           "description": ""
         },
-        "func_036_52": {
+        "func_045_52": {
           "description": ""
         },
-        "func_036_53": {
+        "func_045_53": {
           "description": ""
         },
-        "func_036_54": {
+        "func_045_54": {
           "description": ""
         },
-        "func_036_55": {
+        "func_045_55": {
           "description": ""
         },
-        "func_036_56": {
+        "func_045_56": {
           "description": ""
         },
-        "func_036_57": {
+        "func_045_57": {
           "description": ""
         },
-        "func_036_58": {
+        "func_045_58": {
           "description": ""
         },
-        "func_036_59": {
+        "func_045_59": {
           "description": ""
         },
-        "func_036_60": {
+        "func_045_60": {
           "description": ""
         },
-        "func_036_61": {
+        "func_045_61": {
           "description": ""
         },
-        "func_036_62": {
+        "func_045_62": {
           "description": ""
         },
-        "func_036_63": {
+        "func_045_63": {
           "description": ""
         },
-        "func_036_64": {
+        "func_045_64": {
           "description": ""
         }
       }
@@ -1490,58 +1490,58 @@
       "hash": "142b85388ba71584a417618af6dae890",
       "description": "",
       "functions": {
-        "func_028_01": {
+        "func_036_01": {
           "description": ""
         },
-        "func_028_02": {
+        "func_036_02": {
           "description": ""
         },
-        "func_028_03": {
+        "func_036_03": {
           "description": ""
         },
-        "func_028_04": {
+        "func_036_04": {
           "description": ""
         },
-        "func_028_05": {
+        "func_036_05": {
           "description": ""
         },
-        "func_028_06": {
+        "func_036_06": {
           "description": ""
         },
-        "func_028_07": {
+        "func_036_07": {
           "description": ""
         },
-        "func_028_08": {
+        "func_036_08": {
           "description": ""
         },
-        "func_028_09": {
+        "func_036_09": {
           "description": ""
         },
-        "func_028_10": {
+        "func_036_10": {
           "description": ""
         },
-        "func_028_11": {
+        "func_036_11": {
           "description": ""
         },
-        "func_028_12": {
+        "func_036_12": {
           "description": ""
         },
-        "func_028_13": {
+        "func_036_13": {
           "description": ""
         },
-        "func_028_14": {
+        "func_036_14": {
           "description": ""
         },
-        "func_028_15": {
+        "func_036_15": {
           "description": ""
         },
-        "func_028_16": {
+        "func_036_16": {
           "description": ""
         },
-        "func_028_17": {
+        "func_036_17": {
           "description": ""
         },
-        "func_028_18": {
+        "func_036_18": {
           "description": ""
         }
       }

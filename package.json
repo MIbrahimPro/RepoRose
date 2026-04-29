@@ -1,6 +1,6 @@
 {
   "name": "reporose",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Repository scanner that builds a structural map of a codebase (functions, imports, exports, dependencies) and adds file descriptions of what the file does,, so anagentic AI can just read the map and know the project context",
   "main": "bin/cli.js",
   "bin": {
