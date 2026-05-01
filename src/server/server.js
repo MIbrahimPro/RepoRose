@@ -8,6 +8,7 @@ const http = require('http');
 const path = require('path');
 const express = require('express');
 const { search } = require('./search');
+const { loadFullMap, searchFiles } = require('../core/storage');
 
 const DEFAULT_PORT = 8689;
 const PUBLIC_DIR = path.join(__dirname, 'public');
@@ -31,16 +32,22 @@ const PUBLIC_DIR = path.join(__dirname, 'public');
 /* Helpers                                                             */
 /* ------------------------------------------------------------------ */
 
-// loads map.json, throws helpful error if not found
-function loadMap(mapPath) {
-  if (!fs.existsSync(mapPath)) {
+// loads map from split storage, throws helpful error if not found
+function loadMap(repoPath, outDir) {
+  const map = loadFullMap(repoPath, outDir);
+  if (!map) {
+    // Fallback to old map.json
+    const oldPath = path.join(repoPath, outDir || '.reporose', 'map.json');
+    if (fs.existsSync(oldPath)) {
+      return JSON.parse(fs.readFileSync(oldPath, 'utf8'));
+    }
     const err = new Error(
-      `Cannot find ${mapPath}. Run "reporose analyze" first.`,
+      `Cannot find index.json. Run "reporose analyze" first.`,
     );
     err.code = 'ENOENT';
     throw err;
   }
-  return JSON.parse(fs.readFileSync(mapPath, 'utf8'));
+  return map;
 }
 
 // builds detailed info for a file node including connections
@@ -159,9 +166,10 @@ function findNode(map, id) {
 // creates the express app with all routes and middleware
 function createApp(options = {}) {
   const app = express();
-  const mapPath = options.mapPath;
+  const repoPath = options.repoPath || process.cwd();
+  const outDir = options.outDir || '.reporose';
   const publicDir = options.publicDir || PUBLIC_DIR;
-  const loader = options.loader || (() => loadMap(mapPath));
+  const loader = options.loader || (() => loadMap(repoPath, outDir));
 
   // CORS headers so browser doesnt complain
   app.use((req, res, next) => {
@@ -221,6 +229,40 @@ function createApp(options = {}) {
         return res.status(404).json({ error: 'not_found', id: req.params.id });
       }
       res.json(node);
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  // query endpoint for AI agents - search and get full file data
+  app.get('/api/query', (req, res, next) => {
+    try {
+      const q = String(req.query.q || '').slice(0, 200);
+      const limit = Math.min(20, req.query.limit ? Number(req.query.limit) : 5);
+      const includeFull = req.query.full !== 'false';
+      
+      const matches = searchFiles(repoPath, q, outDir, { limit, includeFull });
+      
+      res.json({
+        query: q,
+        count: matches.length,
+        results: matches,
+      });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  // get full file data by path
+  app.get('/api/file/*', (req, res, next) => {
+    try {
+      const filePath = req.params[0];
+      const file = getFileByPath(repoPath, filePath, outDir);
+      
+      if (!file) {
+        return res.status(404).json({ error: 'not_found', path: filePath });
+      }
+      res.json(file);
     } catch (err) {
       next(err);
     }

@@ -10,20 +10,24 @@ Visit us at www.reporose.tech
 
 Reporose reads through your repository files and builds a structural map of the project. It tracks how files depend on each other and scores which files are more important based on how many other files depend on them and where they sit in the dependency graph. It also uses smaller models to create descriptions of what the files contents do.
 
-**Its main purpose is to save agentic AI tokens.** Instead of feeding many files into an AI, you can provide one map file (`.reporose/map.json`) and the agent gets exact project context, including what the project does, which files are central, and which file should be targeted for a specific change.
+**Its main purpose is to save agentic AI tokens.** Instead of feeding many files into an AI, you can provide the map files (`.reporose/index.json` + `.reporose/files/*.json`) and the agent gets exact project context, including what the project does, which files are central, and which file should be targeted for a specific change.
 
 
 ## Features
 
 - **AST-based scanning** -- Parses JS/TS/JSX/TSX with full function, import, and export extraction
 - **Dependency mapping** -- Direct links, indirect (2-hop) links, circular dependency detection (Tarjan SCC), and betweenness centrality
+- **Next.js route detection** -- Implicit connections from app/pages directory structure
+- **Smart file filtering** -- AI pre-filters which files are worth summarizing (skips generated/temp files)
 - **Transitive importance scoring** -- Entry-point files that orchestrate critical modules are ranked properly (not just files with many importers)
 - **AI summaries** -- Supports Ollama (local & cloud), Anthropic, Groq, OpenAI, OpenRouter, DeepSeek, LM Studio, and any OpenAI-compatible API
+- **Searchable tags** -- AI generates tags for each file (auth, api, database, ui, etc)
 - **Rate limit handling** -- Parses `retry-after`, `x-ratelimit-reset-tokens`, and Groq-specific headers; sleeps exactly the right amount
 - **Live streaming** -- Terminal shows real-time AI token output from both local and cloud providers
 - **Persistent model loading** -- Keeps Ollama models loaded in RAM (`keep_alive: -1`) for zero cold-start latency
 - **Interactive 3D graph** -- Force-directed visualization with search, filtering, and detail panels
 - **Caching** -- Only re-summarizes files that have changed (MD5-based)
+- **Split storage** -- Index + individual file records for efficient queries
 
 ## Installation
 
@@ -40,18 +44,54 @@ npm link
 
 ### MCP Server Setup
 
-Reporose can be used as an MCP (Model Context Protocol) server. Add to your MCP config:
+Reporose can be used as an MCP (Model Context Protocol) server, allowing AI assistants like Claude to query your codebase directly.
+
+**Find your MCP config location:**
+- **Claude Desktop**: `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows)
+- **Cursor**: Settings → MCP → Add new MCP server
+- **Other editors**: Check your editor's documentation for MCP configuration
+
+**Add to your MCP config:**
 
 ```json
 {
   "mcpServers": {
     "reporose": {
       "command": "npx",
-      "args": ["reporose", "mcp"]
+      "args": ["-y", "reporose", "mcp"],
+      "env": {
+        "PATH": "/usr/local/bin:/usr/bin:/bin"
+      }
     }
   }
 }
 ```
+
+**For local development** (if you cloned the repo):
+```json
+{
+  "mcpServers": {
+    "reporose": {
+      "command": "node",
+      "args": ["/path/to/RepoRose/bin/cli.js", "mcp"],
+      "cwd": "/path/to/your/project"
+    }
+  }
+}
+```
+
+**Test the MCP server:**
+```bash
+# This should start the MCP server (it will wait for JSON-RPC messages)
+npx reporose mcp
+```
+
+**MCP Tools available:**
+- `reporose_analyze` - Scan and analyze a repository
+- `reporose_get_map` - Get the current repository map
+- `reporose_search_files` - Search files by path, description, or tags
+- `reporose_get_file` - Get detailed info about a specific file
+- `reporose_get_dependencies` - Get dependencies for a file
 
 ## Quick Start
 
@@ -82,7 +122,7 @@ Path is optional - defaults to current directory.
 
 ### `reporose analyze [path]`
 
-Scans the repository, maps dependencies, and generates AI descriptions. Outputs `.reporose/map.json`. Path is optional - defaults to current directory.
+Scans the repository, maps dependencies, and generates AI descriptions. Outputs split storage (`.reporose/index.json` + `.reporose/files/*.json`). Path is optional - defaults to current directory.
 
 ```
 Options:

@@ -10,6 +10,7 @@ const { spawn } = require('child_process');
 const { scan } = require('../core/scanner');
 const { mapDependencies } = require('../core/mapper');
 const { summarize } = require('../ai/summarizer');
+const { splitAndSaveMap, loadFullMap, searchFiles, getFileByPath } = require('../core/storage');
 const {
   loadConfig,
   loadUserConfig,
@@ -100,27 +101,20 @@ async function analyze(targetPath, options = {}) {
   }
 
   // Resolve the output path now so we can persist the map incrementally
-  // throughout summarization. If the user Ctrl+Cs mid-run, the version on
-  // disk reflects every description we've completed so far.
   const outDir = path.resolve(repoPath, options.outDir || '.reporose');
   fs.mkdirSync(outDir, { recursive: true });
-  const outputPath = path.join(outDir, 'map.json');
+  const outputPath = path.join(outDir, 'index.json');
 
   /**
-   * Atomic write: serialize JSON to <outputPath>.tmp then rename. The
-   * rename is atomic on POSIX (and well-behaved on Windows when the target
-   * lives on the same filesystem), so a SIGINT mid-write cannot corrupt
-   * the existing file.
+   * Split storage: index.json + files/*.json
+   * This prevents a single massive JSON file and allows partial reads.
    */
   function writeMapAtomic() {
-    const tmp = outputPath + '.tmp';
-    fs.writeFileSync(tmp, JSON.stringify(map, null, 2) + '\n');
-    fs.renameSync(tmp, outputPath);
+    splitAndSaveMap(repoPath, map, options.outDir);
   }
 
   // Concurrent workers in summarize() may complete near-simultaneously.
-  // Chain writes onto a queue so they happen serially and the final
-  // rename always reflects the latest in-memory state.
+  // Chain writes onto a queue so they happen serially.
   let writeQueue = Promise.resolve();
   function schedulePersist() {
     writeQueue = writeQueue.then(() => {
@@ -129,9 +123,7 @@ async function analyze(targetPath, options = {}) {
     return writeQueue;
   }
 
-  // Snapshot 1: write the post-mapping skeleton (with empty descriptions).
-  // Even if Phase 3 is killed before producing a single description, the
-  // user still has a usable structural map on disk.
+  // Snapshot 1: write the post-mapping skeleton.
   writeMapAtomic();
 
   let summarizeStats = null;
@@ -181,7 +173,7 @@ async function analyze(targetPath, options = {}) {
           `(${summarizeStats.files_from_cache} files cached) via ${summarizeStats.provider}`,
       );
     }
-    terminal.done(`Map written to ${outputPath}`);
+    terminal.done(`Map written to ${outputPath} (split storage: index + ${map.files.length} file records)`);
   }
 
   return { outputPath, map, summarizeStats };
@@ -192,17 +184,24 @@ async function analyze(targetPath, options = {}) {
 async function summarizeCmd(targetPath, options = {}) {
   const repoPath = path.resolve(targetPath || process.cwd());
   const dir = path.resolve(repoPath, options.outDir || '.reporose');
-  const inputPath = path.join(dir, 'map.json');
+  const inputPath = path.join(dir, 'index.json');
 
-  if (!fs.existsSync(inputPath)) {
-    const err = new Error(
-      `Cannot find ${inputPath}. Run "reporose analyze" first.`,
-    );
-    err.code = 'ENOENT';
-    throw err;
+  let map;
+  if (fs.existsSync(inputPath)) {
+    map = loadFullMap(repoPath, options.outDir);
+  } else {
+    // Fallback to old map.json
+    const oldPath = path.join(dir, 'map.json');
+    if (fs.existsSync(oldPath)) {
+      map = JSON.parse(fs.readFileSync(oldPath, 'utf8'));
+    } else {
+      const err = new Error(
+        `Cannot find ${inputPath} or map.json. Run "reporose analyze" first.`,
+      );
+      err.code = 'ENOENT';
+      throw err;
+    }
   }
-
-  const map = JSON.parse(fs.readFileSync(inputPath, 'utf8'));
   const cfg = options.config || loadConfig(repoPath, options.outDir);
 
   if (!options.silent) {
@@ -211,11 +210,9 @@ async function summarizeCmd(targetPath, options = {}) {
   const modelLabel = presetModelLabel(cfg) || 'unknown';
   terminal.updateStats({ modelLabel: `${cfg.ai.provider}/${modelLabel}` });
 
-  // Atomic, serialized incremental writes — same approach as `analyze`.
+  // Atomic, serialized incremental writes — using split storage.
   function writeMapAtomic() {
-    const tmp = inputPath + '.tmp';
-    fs.writeFileSync(tmp, JSON.stringify(map, null, 2) + '\n');
-    fs.renameSync(tmp, inputPath);
+    splitAndSaveMap(repoPath, map, options.outDir);
   }
   let writeQueue = Promise.resolve();
   const schedulePersist = () => {
@@ -330,18 +327,21 @@ function openBrowser(url) {
 async function serveCmd(targetPath, options = {}) {
   const repoPath = path.resolve(targetPath || process.cwd());
   const dir = path.resolve(repoPath, options.outDir || '.reporose');
-  const mapPath = path.join(dir, 'map.json');
+  const indexPath = path.join(dir, 'index.json');
+  const oldMapPath = path.join(dir, 'map.json');
 
-  if (!fs.existsSync(mapPath)) {
+  // Check for either new or old format
+  if (!fs.existsSync(indexPath) && !fs.existsSync(oldMapPath)) {
     const err = new Error(
-      `Cannot find ${mapPath}. Run "reporose analyze" first.`,
+      `Cannot find ${indexPath} or map.json. Run "reporose analyze" first.`,
     );
     err.code = 'ENOENT';
     throw err;
   }
 
   const { server, port, url } = await startServer({
-    mapPath,
+    repoPath,
+    outDir: options.outDir || '.reporose',
     port: options.port == null ? 8689 : Number(options.port),
     host: options.host,
     silent: !!options.silent,
@@ -350,7 +350,7 @@ async function serveCmd(targetPath, options = {}) {
   });
 
   if (!options.silent) {
-    terminal.startServe(url, mapPath);
+    terminal.startServe(url, indexPath);
   }
 
   if (options.open !== false) {
@@ -517,20 +517,26 @@ async function presetCmd(action, name, targetPath, options = {}) {
 async function mapCmd(targetPath, options = {}) {
   const repoPath = path.resolve(targetPath || process.cwd());
   const dir = path.resolve(repoPath, options.outDir || '.reporose');
-  const inputPath = path.join(dir, 'map.json');
-
-  if (!fs.existsSync(inputPath)) {
-    const err = new Error(
-      `Cannot find ${inputPath}. Run "reporose analyze" first.`,
-    );
-    err.code = 'ENOENT';
-    throw err;
+  
+  let map = loadFullMap(repoPath, options.outDir);
+  
+  if (!map) {
+    // Fallback to old map.json
+    const oldPath = path.join(dir, 'map.json');
+    if (fs.existsSync(oldPath)) {
+      const raw = fs.readFileSync(oldPath, 'utf8');
+      map = JSON.parse(raw);
+    } else {
+      const err = new Error(
+        `Cannot find index.json or map.json. Run "reporose analyze" first.`,
+      );
+      err.code = 'ENOENT';
+      throw err;
+    }
   }
-
-  const raw = fs.readFileSync(inputPath, 'utf8');
-  const map = JSON.parse(raw);
+  
   mapDependencies(map);
-  fs.writeFileSync(inputPath, JSON.stringify(map, null, 2) + '\n');
+  splitAndSaveMap(repoPath, map, options.outDir);
 
   if (!options.silent) {
     log(
@@ -538,10 +544,10 @@ async function mapCmd(targetPath, options = {}) {
         `${map.circular_dependencies.length} cycles, ` +
         `${map.networks.length} networks`,
     );
-    log(`Map updated at ${inputPath}`);
+    log(`Map updated at ${dir}/index.json`);
   }
 
-  return { outputPath: inputPath, map };
+  return { outputPath: dir + '/index.json', map };
 }
 
 // who needs help?? isnt everyone a genious

@@ -63,6 +63,7 @@ function scoreFile(file, query, tokens) {
   if (q && name.includes(q)) score += 400;
   if (q && pathStr.includes(q)) score += 200;
   if (q && desc.includes(q)) score += 80;
+  if (q && (file.tags || []).some(t => t.toLowerCase().includes(q))) score += 60;
 
   for (const tok of tokens) {
     if (name.includes(tok)) score += 60;

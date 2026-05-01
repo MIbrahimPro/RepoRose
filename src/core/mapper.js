@@ -26,6 +26,9 @@ const path = require('path');
 // these are the ONLY extensions we care about for code files
 const CODE_EXTS = ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs'];
 
+// Next.js-like routing directories
+const ROUTE_DIRS = ['app', 'pages', 'src/app', 'src/pages'];
+
 // weights for different types of connections
 // higher = more important basically
 const WEIGHTS = {
@@ -33,6 +36,8 @@ const WEIGHTS = {
   INDIRECT: 50,     // file A imports file B which imports file C (2 hops)
   PACKAGE: 80,      // importing from node_modules
   CIRCULAR: 200,    // BAD BAD BAD circular dependencies get highest weight cuz theyre trouble
+  ROUTE: 60,        // Next.js adjacent route
+  LAYOUT: 90,       // Next.js layout-child route
 };
 
 
@@ -147,6 +152,76 @@ function makeIdGenerator() {
 // this is where we figure out who imports who
 // like detective work but for code,,, finding all the relationships
 // we look at every file and track what it imports (both other files and npm packages)
+function isRouteFile(filePath) {
+  for (const routeDir of ROUTE_DIRS) {
+    const prefix = routeDir + '/';
+    if (filePath.startsWith(prefix)) return true;
+  }
+  return false;
+}
+
+function getRouteParent(filePath) {
+  for (const routeDir of ROUTE_DIRS) {
+    const prefix = routeDir + '/';
+    if (!filePath.startsWith(prefix)) continue;
+    
+    const relPath = filePath.slice(prefix.length);
+    const parentDir = path.posix.dirname(relPath);
+    if (parentDir === '.' || parentDir === routeDir) return null;
+    
+    // Parent is the directory + layout/page/index file
+    const parentBase = path.posix.join(prefix, parentDir);
+    return parentBase;
+  }
+  return null;
+}
+
+function isLayoutFile(filePath) {
+  const name = path.posix.basename(filePath, path.posix.extname(filePath));
+  return name === 'layout' || name === 'template';
+}
+
+function isPageFile(filePath) {
+  const name = path.posix.basename(filePath, path.posix.extname(filePath));
+  return name === 'page' || name === 'index' || name === 'route';
+}
+
+function buildNextjsRouteLinks(files, byPath, nextLinkId) {
+  const routeLinks = [];
+  
+  for (const file of files) {
+    if (!isRouteFile(file.path)) continue;
+    
+    const parentBase = getRouteParent(file.path);
+    if (!parentBase) continue;
+    
+    // Find parent layout/page file
+    for (const ext of CODE_EXTS) {
+      const parentPath = parentBase + ext;
+      const parentFile = byPath.get(parentPath);
+      
+      if (parentFile && parentFile.id !== file.id) {
+        const linkType = isLayoutFile(parentFile.path) ? 'layout' : 'route';
+        routeLinks.push({
+          id: nextLinkId(),
+          from_file_id: parentFile.id,
+          from_function_id: null,
+          to_file_id: file.id,
+          to_function_id: null,
+          type: linkType,
+          location: { file: file.path, line: null },
+          frequency: 1,
+          weight: linkType === 'layout' ? WEIGHTS.LAYOUT : WEIGHTS.ROUTE,
+          is_circular: false,
+          implicit: true,  // not from AST imports, from directory structure
+        });
+      }
+    }
+  }
+  
+  return routeLinks;
+}
+
 function buildDirectLinks(map, byPath, packageIndex, nextLinkId) {
   // use Maps so we can dedupe links
   // same file importing same target multiple times = one link with higher frequency
@@ -239,8 +314,13 @@ function buildDirectLinks(map, byPath, packageIndex, nextLinkId) {
   }
 
   // convert Maps to arrays for the final result
+  const fileLinks = [...fileLinkMap.values()];
+  
+  // Add Next.js route-based implicit links
+  const routeLinks = buildNextjsRouteLinks(map.files, byPath, nextLinkId);
+  
   return {
-    fileLinks: [...fileLinkMap.values()],
+    fileLinks: [...fileLinks, ...routeLinks],
     packageLinks: [...packageLinkMap.values()],
   };
 }

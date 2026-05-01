@@ -122,6 +122,9 @@ function renderFilePrompt(input) {
     '- one compact paragraph',
     '- plain English, technical and specific',
     '- do not say "this file contains" unless needed; describe what it actually does',
+    '',
+    'Also provide 3-5 searchable tags that describe this file\'s purpose (e.g., "auth", "api", "database", "ui", "utility").',
+    'Return your response as JSON: {"description": "...", "tags": ["tag1", "tag2", ...]}',
   ].join('\n');
 }
 
@@ -201,6 +204,9 @@ function renderFullFilePrompt(input, partIndex = 0, previousDescription = '') {
     lines.push('');
     lines.push('Format: 5-8 sentences, one compact paragraph, technical but clear.');
     lines.push('Be concrete. Prefer statements like "renders the authenticated dashboard shell and switches panels from local nav state" over generic phrases like "defines a dashboard component".');
+    lines.push('');
+    lines.push('Also provide 3-5 searchable tags that describe this file\'s purpose (e.g., "auth", "api", "database", "ui", "utility", "config").');
+    lines.push('Return your response as JSON: {"description": "...", "tags": ["tag1", "tag2", ...]}');
   } else {
     // Intermediate part - ask for partial summary
     lines.push(`Please provide a brief but concrete summary of what you've seen so far in parts 1-${partIndex + 1}.`);

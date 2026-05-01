@@ -10,6 +10,7 @@ const path = require('path');
 
 const { buildFileInput, buildFullFileInput, renderFullFilePrompt } = require('./prompts');
 const { ensurePreamble } = require('../utils/agents-md');
+const { filterFilesWithAI } = require('./file-filter');
 const { createHeuristicProvider } = require('./heuristic');
 const { createOpenRouterProvider } = require('./openrouter');
 const { createOpenAIProvider } = require('./openai');
@@ -480,21 +481,52 @@ function loadContextFiles(repoPath) {
 // these wrap the provider calls with retries and error handling
 
 // calls the provider to summarize a file, with retries
+function parseAIResponse(text) {
+  if (!text || !text.trim()) return { description: '', tags: [] };
+  
+  // Try to parse as JSON
+  try {
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const parsed = JSON.parse(jsonMatch[0]);
+      if (parsed.description && Array.isArray(parsed.tags)) {
+        return {
+          description: parsed.description.trim(),
+          tags: parsed.tags.slice(0, 10).map(t => String(t).toLowerCase()),
+        };
+      }
+    }
+  } catch (_e) {
+    // Not valid JSON, fall through
+  }
+  
+  // Fallback: treat as plain description
+  const tagsMatch = text.match(/tags?:\s*\[([^\]]+)\]/i);
+  const tags = tagsMatch 
+    ? tagsMatch[1].split(',').map(t => t.trim().replace(/['"]/g, '').toLowerCase()).filter(Boolean)
+    : [];
+  
+  // Remove tags line from description
+  let description = text.replace(/tags?:\s*\[[^\]]+\]/i, '').trim();
+  
+  return { description, tags };
+}
+
 async function describeFile(provider, fileInput, retryOptions, onLog, onStream) {
   try {
-    const desc = await retryWithBackoff(() => provider.summarizeFile(fileInput, onStream), {
+    const response = await retryWithBackoff(() => provider.summarizeFile(fileInput, onStream), {
       ...retryOptions,
       onRetry: (attempt, err) => {
         if (onLog) onLog('warn', `[file ${fileInput.path}] retry ${attempt}: ${err.message}`);
       },
     });
-    if (desc && desc.trim()) return desc.trim();
+    return parseAIResponse(response);
   } catch (err) {
     if (onLog) onLog('warn', `[file ${fileInput.path}] giving up after retries: ${err.message}`);
   }
   // Provider returned empty / errored — leave description empty rather than
   // silently falling back to heuristic. Heuristic is opt-in via --model heuristic.
-  return '';
+  return { description: '', tags: [] };
 }
 
 // NOTE: not used anymore since we removed function descriptions
@@ -715,9 +747,14 @@ async function summarize(map, options = {}) {
     }
   }
 
+  // Pre-filter: ask AI which files should be summarized
+  const filteredFiles = options.skipFilter 
+    ? map.files 
+    : await filterFilesWithAI(map.files, provider, repoPath, onLog);
+  
   // sort files so dependencies get summarized first
-  // this lets us pass dependency descriptions to dependent files
-  const sortedFiles = sortFilesByDependencyDepth(map.files, repoPath);
+  // this lets us pass dependency descriptions to later files
+  const sortedFiles = sortFilesByDependencyDepth(filteredFiles, repoPath);
   const totalFiles = sortedFiles.length;
 
   // only code files get AI summaries (not images, configs, etc)
@@ -750,6 +787,7 @@ async function summarize(map, options = {}) {
     const cachedFile = cache.files[file.path];
     if (cachedFile && cachedFile.hash === file.hash && cachedFile.description) {
       file.description = cachedFile.description;
+      file.tags = cachedFile.tags || [];
       fileDescriptions.set(file.path, file.description);
       for (const fn of file.functions || []) fn.description = '';
       filesFromCache += 1;
@@ -839,7 +877,9 @@ async function summarize(map, options = {}) {
       // snippet mode: just read first 500 bytes and summarize that
       const snippet = file.type === 'code' ? readSnippet(path.join(repoPath, file.path)) : '';
       const fileInput = buildFileInput(file, snippet, { repoContext });
-      file.description = await describeFile(provider, fileInput, retryOptions, onLog, onStream);
+      const { description, tags } = await describeFile(provider, fileInput, retryOptions, onLog, onStream);
+    file.description = description;
+    file.tags = tags;
     }
 
     fileDescriptions.set(file.path, file.description);
@@ -849,6 +889,7 @@ async function summarize(map, options = {}) {
     cache.files[file.path] = {
       hash: file.hash,
       description: file.description,
+      tags: file.tags || [],
       functions: Object.fromEntries(
         (file.functions || []).map((fn) => [fn.id, { description: fn.description || '' }]),
       ),
@@ -907,6 +948,7 @@ module.exports = {
   autoConcurrency,
   resolveConcurrency,
   runWithConcurrency,
+  parseAIResponse,
   SKIP_PROVIDER,
   CACHE_VERSION,
   DEFAULT_BACKOFF_MS,

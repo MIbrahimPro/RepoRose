@@ -37,6 +37,7 @@ const path = require('path');
 const { scan } = require('../core/scanner');
 const { mapDependencies } = require('../core/mapper');
 const { loadConfig } = require('../ai/config');
+const { loadFullMap, readIndex, searchFiles, getFileByPath } = require('../core/storage');
 
 // creates and starts the MCP server
 // sets up handlers for resources (files AI can read) and tools (functions AI can call)
@@ -48,15 +49,19 @@ async function startMcpServer(repoPath, options = {}) {
     { capabilities: { resources: {}, tools: {} } }
   );
 
-  // figure out where the repo is and where map.json lives
+  // figure out where the repo is
   const targetPath = path.resolve(repoPath || process.cwd());
   const outDir = options.outDir || '.reporose';
-  const mapPath = path.join(targetPath, outDir, 'map.json');
-
-  // try to load existing map.json if its there
-  let map = null;
-  if (fs.existsSync(mapPath)) {
-    map = JSON.parse(fs.readFileSync(mapPath, 'utf8'));
+  
+  // try to load existing map from split storage
+  let map = loadFullMap(targetPath, outDir);
+  
+  // fallback to old map.json
+  if (!map) {
+    const oldPath = path.join(targetPath, outDir, 'map.json');
+    if (fs.existsSync(oldPath)) {
+      map = JSON.parse(fs.readFileSync(oldPath, 'utf8'));
+    }
   }
 
   // handler: "what resources do you have?"
@@ -65,10 +70,16 @@ async function startMcpServer(repoPath, options = {}) {
   server.setRequestHandler(ListResourcesRequestSchema, async () => ({
     resources: [
       {
-        uri: `reporose://${targetPath}/map.json`,
+        uri: `reporose://${targetPath}/index.json`,
         mimeType: 'application/json',
-        name: 'Repository Map',
-        description: 'Full dependency map and file descriptions',
+        name: 'Repository Map Index',
+        description: 'Lightweight index of repository structure (file list, packages, stats)',
+      },
+      {
+        uri: `reporose://${targetPath}/files`,
+        mimeType: 'application/json',
+        name: 'Repository Files',
+        description: 'Directory containing individual file records with full descriptions',
       },
       {
         uri: `reporose://${targetPath}/AGENTS.md`,
@@ -84,17 +95,30 @@ async function startMcpServer(repoPath, options = {}) {
   server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
     const uri = request.params.uri;
 
-    if (uri.endsWith('/map.json') && fs.existsSync(mapPath)) {
-      const content = fs.readFileSync(mapPath, 'utf8');
-      return {
-        contents: [
-          {
+    if (uri.endsWith('/index.json')) {
+      const index = readIndex(targetPath, outDir);
+      if (index) {
+        return {
+          contents: [{
             uri,
             mimeType: 'application/json',
-            text: content,
-          },
-        ],
-      };
+            text: JSON.stringify(index, null, 2),
+          }],
+        };
+      }
+    }
+    
+    if (uri.endsWith('/files')) {
+      const index = readIndex(targetPath, outDir);
+      if (index) {
+        return {
+          contents: [{
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify({ files: index.files.map(f => ({ id: f.id, path: f.path })) }, null, 2),
+          }],
+        };
+      }
     }
 
     if (uri.endsWith('/AGENTS.md')) {
@@ -192,64 +216,63 @@ async function startMcpServer(repoPath, options = {}) {
 
     // dispatch to the right tool based on name
     switch (tool) {
-      // runs a fresh scan + map, saves to map.json
+      // runs a fresh scan + map, saves to split storage
       case 'reporose_analyze': {
         const result = await scan(target, { silent: true });
         mapDependencies(result);
-        const outPath = path.join(target, outDir, 'map.json');
-        fs.mkdirSync(path.dirname(outPath), { recursive: true });
-        fs.writeFileSync(outPath, JSON.stringify(result, null, 2));
+        const { splitAndSaveMap } = require('../core/storage');
+        const { base } = splitAndSaveMap(target, result, outDir);
         return {
           content: [
             {
               type: 'text',
-              text: `Analyzed ${result.metadata.files_analyzed} files. Map saved to ${outPath}`,
+              text: `Analyzed ${result.metadata.files_analyzed} files. Map saved to ${base}`,
             },
           ],
         };
       }
 
-      // returns the current map.json content
+      // returns the current map content
       case 'reporose_get_map': {
-        const mapPath = path.join(target, outDir, 'map.json');
-        if (!fs.existsSync(mapPath)) {
+        const m = loadFullMap(target, outDir);
+        if (!m) {
           return {
-            content: [{ type: 'text', text: 'No map.json found. Run reporose_analyze first.' }],
+            content: [{ type: 'text', text: 'No map found. Run reporose_analyze first.' }],
             isError: true,
           };
         }
-        const content = fs.readFileSync(mapPath, 'utf8');
+        // Return lightweight version to avoid huge payloads
+        const lightweight = {
+          metadata: m.metadata,
+          files: m.files.map(f => ({
+            id: f.id,
+            path: f.path,
+            description: f.description?.substring(0, 200),
+            tags: f.tags || [],
+            importance_score: f.importance_score,
+          })),
+          packages: m.packages,
+          statistics: m.statistics,
+          circular_dependencies: m.circular_dependencies,
+          networks: m.networks,
+        };
         return {
-          content: [{ type: 'text', text: content }],
+          content: [{ type: 'text', text: JSON.stringify(lightweight, null, 2) }],
         };
       }
 
       // searches files by path, description, or tags
-      // returns matching files up to the limit
       case 'reporose_search_files': {
-        const mapPath = path.join(target, outDir, 'map.json');
-        if (!fs.existsSync(mapPath)) {
+        const matches = searchFiles(target, outDir, args.query || '', {
+          limit: args.limit || 10,
+        });
+        
+        if (matches.length === 0) {
           return {
-            content: [{ type: 'text', text: 'No map.json found. Run reporose_analyze first.' }],
+            content: [{ type: 'text', text: 'No files found. Run reporose_analyze first.' }],
             isError: true,
           };
         }
-        const m = JSON.parse(fs.readFileSync(mapPath, 'utf8'));
-        const query = (args.query || '').toLowerCase();
-        const limit = args.limit || 10;
-
-        const matches = m.files
-          .filter(f =>
-            f.path.toLowerCase().includes(query) ||
-            (f.description && f.description.toLowerCase().includes(query)) ||
-            (f.tags && f.tags.some(t => t.includes(query)))
-          )
-          .slice(0, limit)
-          .map(f => ({
-            path: f.path,
-            description: f.description || '',
-            tags: f.tags || [],
-          }));
 
         return {
           content: [{ type: 'text', text: JSON.stringify(matches, null, 2) }],
@@ -258,20 +281,11 @@ async function startMcpServer(repoPath, options = {}) {
 
       // gets detailed info about a specific file by path
       case 'reporose_get_file': {
-        const mapPath = path.join(target, outDir, 'map.json');
-        if (!fs.existsSync(mapPath)) {
-          return {
-            content: [{ type: 'text', text: 'No map.json found. Run reporose_analyze first.' }],
-            isError: true,
-          };
-        }
-        const m = JSON.parse(fs.readFileSync(mapPath, 'utf8'));
-        const filePath = args.file;
-        const file = m.files.find(f => f.path === filePath);
+        const file = getFileByPath(target, args.file, outDir);
 
         if (!file) {
           return {
-            content: [{ type: 'text', text: `File not found: ${filePath}` }],
+            content: [{ type: 'text', text: `File not found: ${args.file}` }],
             isError: true,
           };
         }
