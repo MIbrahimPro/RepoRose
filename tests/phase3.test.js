@@ -23,6 +23,7 @@ const {
   heuristicFileDescription,
   heuristicFunctionDescription,
 } = require('../src/ai/heuristic');
+const { loadFullMap } = require('../src/core/storage');
 const {
   loadConfig,
   saveConfig,
@@ -534,17 +535,17 @@ test('analyze --no-summarize leaves descriptions empty', async () => {
   }
 });
 
-test('summarize CLI command enriches an existing map.json', async () => {
+test('summarize CLI command enriches an existing map', async () => {
   const repo = makeRepo({
     'src/util.ts': 'export function getName(): string { return "x"; }\n',
   });
   try {
     await analyze(repo, { silent: true, summarize: false, config: { ai: { provider: 'heuristic', model: 'heuristic' } } });
-    const before = JSON.parse(fs.readFileSync(path.join(repo, '.reporose', 'map.json'), 'utf8'));
+    const before = loadFullMap(repo, '.reporose');
     assert.equal(before.files.find((f) => f.path === 'src/util.ts').description, '');
 
     await summarizeCmd(repo, { silent: true, config: { ai: { provider: 'heuristic', model: 'heuristic' } } });
-    const after = JSON.parse(fs.readFileSync(path.join(repo, '.reporose', 'map.json'), 'utf8'));
+    const after = loadFullMap(repo, '.reporose');
     const f = after.files.find((file) => file.path === 'src/util.ts');
     assert.ok(f.description && f.description.length > 0);
     // Function descriptions are intentionally empty (saves tokens).
@@ -680,26 +681,25 @@ test('summarize fires onFileSummarized after every file (cache hits + fresh)', a
   }
 });
 
-test('analyze CLI persists map.json incrementally during summarization', async () => {
+test('analyze CLI persists map incrementally during summarization', async () => {
   const repo = makeRepo({
     'src/a.ts': 'export const a = 1;\n',
     'src/b.ts': 'export const b = 2;\n',
     'src/c.ts': 'export const c = 3;\n',
   });
   try {
-    const mapPath = path.join(repo, '.reporose', 'map.json');
     const snapshots = [];
 
     // Wrap the heuristic provider so we can take a snapshot of the on-disk
-    // map.json *between* per-file summarizations. This proves that the
+    // map *between* per-file summarizations. This proves that the
     // analyze command's onFileSummarized hook writes to disk after each
     // file, not just at the end.
     const realProvider = createHeuristicProvider();
     const snapshot = () => {
-      if (fs.existsSync(mapPath)) {
-        const onDisk = JSON.parse(fs.readFileSync(mapPath, 'utf8'));
+      const map = loadFullMap(repo, '.reporose');
+      if (map) {
         snapshots.push(
-          onDisk.files
+          map.files
             .filter((f) => f.description && f.description.length > 0)
             .map((f) => f.path)
             .sort(),
@@ -765,13 +765,12 @@ test('analyze CLI persists map.json incrementally during summarization', async (
   }
 });
 
-test('analyze writes a structural map.json before any AI work runs', async () => {
+test('analyze writes a structural map before any AI work runs', async () => {
   const repo = makeRepo({
     'src/a.ts': 'export const a = 1;\n',
     'src/b.ts': 'export const b = 2;\n',
   });
   try {
-    const mapPath = path.join(repo, '.reporose', 'map.json');
     let earlySnapshot = null;
 
     // A "provider" that snapshots the map state when the very first file is
@@ -779,8 +778,8 @@ test('analyze writes a structural map.json before any AI work runs', async () =>
     // written the post-Phase-2 skeleton. We stub both code-paths since the
     // summarizer prefers summarizeFullFile when present.
     const captureEarly = () => {
-      if (earlySnapshot === null && fs.existsSync(mapPath)) {
-        earlySnapshot = JSON.parse(fs.readFileSync(mapPath, 'utf8'));
+      if (earlySnapshot === null) {
+        earlySnapshot = loadFullMap(repo, '.reporose');
       }
     };
     const earlyChecker = {
@@ -804,7 +803,7 @@ test('analyze writes a structural map.json before any AI work runs', async () =>
       config: { ai: { provider: 'heuristic', model: 'heuristic' } },
     });
 
-    assert.ok(earlySnapshot, 'expected map.json to exist before first AI call');
+    assert.ok(earlySnapshot, 'expected map to exist before first AI call');
     assert.ok(Array.isArray(earlySnapshot.files), 'snapshot should be a valid map');
     assert.ok(earlySnapshot.files.length > 0, 'snapshot should contain files');
     // The structural fields must be present even before any descriptions land.

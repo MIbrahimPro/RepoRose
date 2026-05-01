@@ -16,6 +16,7 @@ const {
 } = require('../src/server/server');
 const { search, tokenize } = require('../src/server/search');
 const { loadDotenv } = require('../src/utils/dotenv');
+const { splitAndSaveMap } = require('../src/core/storage');
 
 /* ------------------------------------------------------------------ */
 /* Fixtures                                                            */
@@ -86,11 +87,8 @@ function fakeMap() {
 }
 
 function writeFakeMap(root) {
-  const dir = path.join(root, '.reporose');
-  fs.mkdirSync(dir, { recursive: true });
-  const p = path.join(dir, 'map.json');
-  fs.writeFileSync(p, JSON.stringify(fakeMap()));
-  return p;
+  const { base } = splitAndSaveMap(root, fakeMap(), '.reporose');
+  return path.join(base, 'index.json');
 }
 
 async function getJson(url) {
@@ -202,8 +200,8 @@ test('findNode resolves files, functions, and packages', () => {
 /* Express app — direct invocation                                     */
 /* ------------------------------------------------------------------ */
 
-async function withServer(mapPath, fn, opts = {}) {
-  const { server, port, url } = await start({ mapPath, port: 0, silent: true, ...opts });
+async function withServer(repoPath, fn, opts = {}) {
+  const { server, port, url } = await start({ repoPath, outDir: '.reporose', port: 0, silent: true, ...opts });
   try {
     await fn({ server, port, url });
   } finally {
@@ -213,9 +211,9 @@ async function withServer(mapPath, fn, opts = {}) {
 
 test('GET /api/health returns ok', async () => {
   const repo = makeRepo({});
-  const mapPath = writeFakeMap(repo);
+  writeFakeMap(repo);
   try {
-    await withServer(mapPath, async ({ url }) => {
+    await withServer(repo, async ({ url }) => {
       const res = await getJson(`${url}/api/health`);
       assert.equal(res.status, 200);
       assert.equal(res.body.ok, true);
@@ -227,7 +225,7 @@ test('GET /api/graph returns the full map', async () => {
   const repo = makeRepo({});
   const mapPath = writeFakeMap(repo);
   try {
-    await withServer(mapPath, async ({ url }) => {
+    await withServer(repo, async ({ url }) => {
       const res = await getJson(`${url}/api/graph`);
       assert.equal(res.status, 200);
       assert.equal(res.body.files.length, 3);
@@ -240,9 +238,9 @@ test('GET /api/graph returns the full map', async () => {
 
 test('GET /api/search finds expected results', async () => {
   const repo = makeRepo({});
-  const mapPath = writeFakeMap(repo);
+  writeFakeMap(repo);
   try {
-    await withServer(mapPath, async ({ url }) => {
+    await withServer(repo, async ({ url }) => {
       const res = await getJson(`${url}/api/search?q=auth`);
       assert.equal(res.status, 200);
       assert.ok(res.body.results.length > 0);
@@ -253,9 +251,9 @@ test('GET /api/search finds expected results', async () => {
 
 test('GET /api/node/:id returns file with connections', async () => {
   const repo = makeRepo({});
-  const mapPath = writeFakeMap(repo);
+  writeFakeMap(repo);
   try {
-    await withServer(mapPath, async ({ url }) => {
+    await withServer(repo, async ({ url }) => {
       const res = await getJson(`${url}/api/node/file_001`);
       assert.equal(res.status, 200);
       assert.equal(res.body.kind, 'file');
@@ -268,9 +266,9 @@ test('GET /api/node/:id returns file with connections', async () => {
 
 test('GET /api/node/:id returns 404 for unknown id', async () => {
   const repo = makeRepo({});
-  const mapPath = writeFakeMap(repo);
+  writeFakeMap(repo);
   try {
-    await withServer(mapPath, async ({ url }) => {
+    await withServer(repo, async ({ url }) => {
       const res = await getJson(`${url}/api/node/nope`);
       assert.equal(res.status, 404);
       assert.equal(res.body.error, 'not_found');
@@ -280,9 +278,9 @@ test('GET /api/node/:id returns 404 for unknown id', async () => {
 
 test('CORS headers present on /api responses', async () => {
   const repo = makeRepo({});
-  const mapPath = writeFakeMap(repo);
+  writeFakeMap(repo);
   try {
-    await withServer(mapPath, async ({ url }) => {
+    await withServer(repo, async ({ url }) => {
       const res = await getRaw(`${url}/api/health`);
       assert.equal(res.status, 200);
       assert.equal(res.headers['access-control-allow-origin'], '*');
@@ -292,9 +290,9 @@ test('CORS headers present on /api responses', async () => {
 
 test('GET / serves the index.html frontend', async () => {
   const repo = makeRepo({});
-  const mapPath = writeFakeMap(repo);
+  writeFakeMap(repo);
   try {
-    await withServer(mapPath, async ({ url }) => {
+    await withServer(repo, async ({ url }) => {
       const res = await getRaw(`${url}/`);
       assert.equal(res.status, 200);
       assert.match(res.body, /<!DOCTYPE html>/i);
@@ -305,9 +303,9 @@ test('GET / serves the index.html frontend', async () => {
 
 test('GET /styles.css and /app.js are served', async () => {
   const repo = makeRepo({});
-  const mapPath = writeFakeMap(repo);
+  writeFakeMap(repo);
   try {
-    await withServer(mapPath, async ({ url }) => {
+    await withServer(repo, async ({ url }) => {
       const css = await getRaw(`${url}/styles.css`);
       assert.equal(css.status, 200);
       assert.match(css.headers['content-type'] || '', /text\/css/);
@@ -321,9 +319,9 @@ test('GET /styles.css and /app.js are served', async () => {
 
 test('unknown /api path returns 404 JSON', async () => {
   const repo = makeRepo({});
-  const mapPath = writeFakeMap(repo);
+  writeFakeMap(repo);
   try {
-    await withServer(mapPath, async ({ url }) => {
+    await withServer(repo, async ({ url }) => {
       const res = await getJson(`${url}/api/does-not-exist`);
       assert.equal(res.status, 404);
       assert.equal(res.body.error, 'not_found');
@@ -331,10 +329,11 @@ test('unknown /api path returns 404 JSON', async () => {
   } finally { cleanup(repo); }
 });
 
-test('missing map.json yields a clear error response', async () => {
+test('missing map yields a clear error response', async () => {
   // Create app pointing at a non-existent map
   const app = createApp({
-    mapPath: '/tmp/definitely-does-not-exist.json',
+    repoPath: '/tmp/definitely-does-not-exist',
+    outDir: '.reporose',
     silent: true,
   });
   const server = http.createServer(app);

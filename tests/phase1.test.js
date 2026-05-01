@@ -284,8 +284,8 @@ test('produces valid JSON output via the analyze CLI command', async () => {
   });
   try {
     const { outputPath, map } = await analyze(repo, { silent: true });
-    assert.ok(fs.existsSync(outputPath), 'map.json should be created');
-    assert.equal(outputPath, path.join(repo, '.reporose', 'map.json'));
+    assert.ok(fs.existsSync(outputPath), 'index.json should be created');
+    assert.equal(outputPath, path.join(repo, '.reporose', 'index.json'));
 
     const raw = fs.readFileSync(outputPath, 'utf8');
     const parsed = JSON.parse(raw); // throws on invalid JSON
