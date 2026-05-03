@@ -49,8 +49,7 @@
     "url": "https://github.com/MIbrahimPro/RepoRose/issues"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
-    "npmjs": "https://registry.npmjs.org"
+    "registry": "https://registry.npmjs.org"
   },
   "type": "commonjs",
   "dependencies": {
