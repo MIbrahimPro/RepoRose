@@ -860,10 +860,13 @@ async function summarize(map, options = {}) {
                 },
               },
             );
+            // Parse the AI response (handles both JSON and plain text formats)
+            const parsed = parseAIResponse(desc);
             if (isLastChunk) {
-              file.description = desc && desc.trim() ? desc.trim() : '';
+              file.description = parsed.description;
+              file.tags = parsed.tags;
             } else {
-              previousDescription = desc && desc.trim() ? desc.trim() : previousDescription;
+              previousDescription = parsed.description || previousDescription;
             }
           } catch (err) {
             if (onLog) onLog('warn', `[file ${file.path}] part ${i + 1} giving up: ${err.message}`);

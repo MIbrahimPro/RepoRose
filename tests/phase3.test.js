@@ -317,7 +317,7 @@ test('caching: second run hits cache for unchanged files (no provider calls)', a
       async close() {},
     };
 
-    const stats = await summarize(map, { repoPath: repo, provider: countingProvider });
+    const stats = await summarize(map, { repoPath: repo, provider: countingProvider, skipFilter: true });
     assert.equal(stats.files, 0, 'all files should come from cache');
     assert.ok(stats.files_from_cache >= 2);
     assert.equal(calls, 0, 'provider must not be called when cache is fresh');
@@ -749,7 +749,7 @@ test('analyze CLI persists map incrementally during summarization', async () => 
     // We expect at least one intermediate snapshot to show fewer completed
     // descriptions than the final state, proving that writes happened
     // mid-run rather than only at the end.
-    const finalMap = JSON.parse(fs.readFileSync(mapPath, 'utf8'));
+    const finalMap = loadFullMap(repo, '.reporose');
     const finalCount = finalMap.files.filter(
       (f) => f.description && f.description.length > 0,
     ).length;

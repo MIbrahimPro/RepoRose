@@ -111,16 +111,18 @@ async function filterFilesWithAI(files, provider, repoPath, onLog) {
       const result = JSON.parse(jsonMatch[0]);
       const toSummarize = new Set(result.filesToSummarize || []);
       
-      const filtered = codeFiles.map(f => ({
-        ...f,
-        summarizable: toSummarize.has(f.path),
-        skipReason: toSummarize.has(f.path) ? undefined : 'filtered_by_ai',
-      }));
+      // Mark original file objects - don't create new objects
+      for (const f of codeFiles) {
+        f.summarizable = toSummarize.has(f.path);
+        if (!f.summarizable) {
+          f.skipReason = 'filtered_by_ai';
+        }
+      }
       
-      const skipped = filtered.filter(f => !f.summarizable).length;
-      onLog?.('info', `AI filtered: ${skipped} files skipped, ${filtered.filter(f => f.summarizable).length} to summarize`);
+      const skipped = codeFiles.filter(f => !f.summarizable).length;
+      onLog?.('info', `AI filtered: ${skipped} files skipped, ${codeFiles.filter(f => f.summarizable).length} to summarize`);
       
-      return filtered;
+      return codeFiles;
     }
   } catch (err) {
     onLog?.('warn', `AI file filter failed: ${err.message}, using heuristics`);
@@ -149,14 +151,15 @@ function filterFilesHeuristic(files) {
     /node_modules[\/]/,
   ];
   
-  return files.map(f => {
+  // Mark original file objects - don't create new objects
+  for (const f of files) {
     const shouldSkip = skipPatterns.some(p => p.test(f.path));
-    return {
-      ...f,
-      summarizable: !shouldSkip,
-      skipReason: shouldSkip ? 'filtered_by_heuristic' : undefined,
-    };
-  });
+    f.summarizable = !shouldSkip;
+    if (shouldSkip) {
+      f.skipReason = 'filtered_by_heuristic';
+    }
+  }
+  return files;
 }
 
 module.exports = {

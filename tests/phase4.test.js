@@ -87,8 +87,8 @@ function fakeMap() {
 }
 
 function writeFakeMap(root) {
-  const { base } = splitAndSaveMap(root, fakeMap(), '.reporose');
-  return path.join(base, 'index.json');
+  const { indexPath } = splitAndSaveMap(root, fakeMap(), '.reporose');
+  return indexPath;
 }
 
 async function getJson(url) {
